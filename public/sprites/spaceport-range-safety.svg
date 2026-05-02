@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.22"/>
+  <path d="M40 14 L58 20 V34 C58 46 50 56 40 60 C30 56 22 46 22 34 V20 Z" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>
+  <path d="M33 35 l5 5 l10 -12" fill="none" stroke="#fff7ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="10" y="52" width="12" height="16" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+  <line x1="16" y1="52" x2="16" y2="40" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="16" y1="40" x2="10" y2="46" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="16" y1="40" x2="22" y2="46" stroke="#38bdf8" stroke-width="2"/>
+  <text x="40" y="68" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#7c2d12" font-weight="bold">RANGE</text>
+</svg>

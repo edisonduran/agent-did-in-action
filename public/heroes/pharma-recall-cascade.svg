@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="bg-pharma" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#450a0a"/>
+      <stop offset="52%" stop-color="#991b1b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg-pharma)"/>
+  <rect x="78" y="132" width="84" height="84" rx="18" fill="#34d399" opacity="0.22"/>
+  <rect x="218" y="90" width="84" height="84" rx="18" fill="#fca5a5" opacity="0.22"/>
+  <rect x="358" y="152" width="84" height="84" rx="18" fill="#5eead4" opacity="0.22"/>
+  <rect x="498" y="110" width="84" height="84" rx="18" fill="#93c5fd" opacity="0.22"/>
+  <path d="M120 170 C168 150 198 118 260 132 S350 214 400 194 S500 130 540 152" fill="none" stroke="#fee2e2" stroke-width="8" stroke-linecap="round"/>
+  <g fill="#fee2e2" font-family="monospace" font-size="18" font-weight="bold">
+    <text x="70" y="252">MAKER</text>
+    <text x="210" y="70">REGULATOR</text>
+    <text x="350" y="268">WHOLESALER</text>
+    <text x="490" y="224">PHARMACY</text>
+  </g>
+  <text x="48" y="68" fill="#fee2e2" font-family="monospace" font-size="40" font-weight="bold">PHARMA RECALL CASCADE</text>
+  <text x="48" y="320" fill="#fee2e2" font-family="monospace" font-size="20">If a middleman shrinks the signed recall scope, the final pharmacy must catch it.</text>
+</svg>

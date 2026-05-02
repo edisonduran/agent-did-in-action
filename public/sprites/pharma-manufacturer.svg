@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.22"/>
+  <rect x="10" y="34" width="60" height="34" fill="#065f46" stroke="#064e3b" stroke-width="2"/>
+  <rect x="18" y="18" width="10" height="16" fill="#10b981" stroke="#064e3b" stroke-width="1.5"/>
+  <rect x="52" y="14" width="12" height="20" fill="#34d399" stroke="#064e3b" stroke-width="1.5"/>
+  <rect x="30" y="42" width="20" height="22" rx="3" fill="#dcfce7" stroke="#065f46" stroke-width="1.5"/>
+  <rect x="34" y="38" width="12" height="8" rx="2" fill="#a7f3d0" stroke="#065f46" stroke-width="1.2"/>
+  <rect x="36" y="48" width="8" height="10" fill="#10b981" opacity="0.75"/>
+  <text x="40" y="72" text-anchor="middle" font-family="monospace" font-size="5.2" fill="#d1fae5" font-weight="bold">LAB</text>
+</svg>

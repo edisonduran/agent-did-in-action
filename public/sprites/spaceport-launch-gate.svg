@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.22"/>
+  <rect x="12" y="24" width="10" height="44" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+  <rect x="58" y="24" width="10" height="44" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+  <line x1="22" y1="28" x2="58" y2="28" stroke="#64748b" stroke-width="2"/>
+  <line x1="22" y1="40" x2="58" y2="40" stroke="#64748b" stroke-width="2"/>
+  <path d="M40 18 L48 34 L48 52 L40 60 L32 52 L32 34 Z" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+  <path d="M36 52 L44 52 L40 64 Z" fill="#f97316" stroke="#9a3412" stroke-width="1.2"/>
+  <circle cx="40" cy="66" r="3" fill="#facc15" opacity="0.8"/>
+  <text x="40" y="72" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#cbd5e1" font-weight="bold">GATE</text>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="bg-news" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#431407"/>
+      <stop offset="55%" stop-color="#9a3412"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg-news)"/>
+  <circle cx="120" cy="180" r="56" fill="#fed7aa" opacity="0.14"/>
+  <circle cx="260" cy="130" r="52" fill="#67e8f9" opacity="0.12"/>
+  <circle cx="400" cy="210" r="54" fill="#fda4af" opacity="0.13"/>
+  <circle cx="540" cy="140" r="56" fill="#bfdbfe" opacity="0.12"/>
+  <path d="M120 180 C180 135 210 130 260 130 S350 210 400 210 S495 140 540 140" fill="none" stroke="#fff7ed" stroke-opacity="0.8" stroke-width="8" stroke-linecap="round"/>
+  <g fill="#fff7ed" font-family="monospace" font-size="20" font-weight="bold">
+    <text x="76" y="188">REPORT</text>
+    <text x="214" y="138">CHECK</text>
+    <text x="358" y="218">EDIT</text>
+    <text x="500" y="148">PUBLISH</text>
+  </g>
+  <g fill="#ffedd5" font-family="monospace" font-size="44" font-weight="bold">
+    <text x="48" y="74">NEWSROOM PUBLISH CHAIN</text>
+  </g>
+  <text x="48" y="316" fill="#ffedd5" font-family="monospace" font-size="20">Editorial provenance survives four handoffs - unless one rogue relay changes the revision.</text>
+</svg>

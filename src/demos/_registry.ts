@@ -23,14 +23,17 @@ import supplyChainManifest from './supply-chain/manifest.json';
 export interface RegistryEntry {
   manifest: DemoManifest;
   load: () => Promise<DemoModule>;
+  heroSrc?: string;
 }
 
 export const DEMO_REGISTRY: readonly RegistryEntry[] = [
   {
+    heroSrc: '/heroes/newsroom-publish-chain.svg',
     manifest: newsroomPublishChainManifest as DemoManifest,
     load: () => import('./newsroom-publish-chain/index').then((m) => m.default),
   },
   {
+    heroSrc: '/heroes/pharma-recall-cascade.svg',
     manifest: pharmaRecallCascadeManifest as DemoManifest,
     load: () => import('./pharma-recall-cascade/index').then((m) => m.default),
   },
@@ -39,6 +42,7 @@ export const DEMO_REGISTRY: readonly RegistryEntry[] = [
     load: () => import('./shopping-mall/index').then((m) => m.default),
   },
   {
+    heroSrc: '/heroes/spaceport-launch-window.svg',
     manifest: spaceportLaunchWindowManifest as DemoManifest,
     load: () => import('./spaceport-launch-window/index').then((m) => m.default),
   },

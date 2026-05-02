@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.22"/>
+  <rect x="10" y="30" width="42" height="32" fill="#0f766e" stroke="#134e4a" stroke-width="2"/>
+  <path d="M52 38 L70 38 L70 62 L52 62 Z" fill="#14b8a6" stroke="#134e4a" stroke-width="2"/>
+  <rect x="16" y="38" width="14" height="12" fill="#ccfbf1" stroke="#0f766e" stroke-width="1.2"/>
+  <path d="M21 38 L21 50" stroke="#0f766e" stroke-width="1"/>
+  <path d="M16 44 L30 44" stroke="#0f766e" stroke-width="1"/>
+  <path d="M34 38 h10" stroke="#99f6e4" stroke-width="2" stroke-linecap="round"/>
+  <path d="M34 44 h8" stroke="#99f6e4" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="24" cy="64" r="6" fill="#1f2937" stroke="#0f172a" stroke-width="1.5"/>
+  <circle cx="58" cy="64" r="6" fill="#1f2937" stroke="#0f172a" stroke-width="1.5"/>
+  <text x="40" y="26" text-anchor="middle" font-family="monospace" font-size="5.2" fill="#99f6e4" font-weight="bold">COLD</text>
+</svg>

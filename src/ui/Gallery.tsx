@@ -58,9 +58,10 @@ export function Gallery({ onPick }: GalleryProps) {
         </header>
 
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {visible.map(({ manifest }) => (
+          {visible.map(({ manifest, heroSrc }) => (
             <li key={manifest.id}>
               <button
+                data-testid={`gallery-card-${manifest.id}`}
                 type="button"
                 onClick={() => {
                   track('gallery.demo.picked', { id: manifest.id });
@@ -69,6 +70,16 @@ export function Gallery({ onPick }: GalleryProps) {
                 className="group block w-full rounded-lg border border-plaza-border bg-plaza-panel p-5 text-left transition hover:border-plaza-accent/60 hover:bg-plaza-panel/80"
                 style={{ borderLeftColor: manifest.accent_color, borderLeftWidth: 4 }}
               >
+                {heroSrc && (
+                  <div className="mb-4 overflow-hidden rounded-md border border-plaza-border bg-plaza-bg/60">
+                    <img
+                      src={heroSrc}
+                      alt={`${manifest.title} preview art`}
+                      className="h-32 w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="mb-2 flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-plaza-text">
                     {manifest.title}

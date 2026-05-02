@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.22"/>
+  <rect x="18" y="14" width="44" height="54" rx="5" fill="#ecfeff" stroke="#155e75" stroke-width="2"/>
+  <rect x="30" y="10" width="20" height="8" rx="3" fill="#0f766e"/>
+  <path d="M26 29 l4 4 l7 -8" fill="none" stroke="#14b8a6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M26 44 l4 4 l7 -8" fill="none" stroke="#14b8a6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="42" y="26" width="12" height="3" fill="#164e63" opacity="0.7"/>
+  <rect x="42" y="41" width="12" height="3" fill="#164e63" opacity="0.7"/>
+  <circle cx="58" cy="54" r="8" fill="#14b8a6" stroke="#134e4a" stroke-width="1.5"/>
+  <path d="M55 54 l2 2 l4 -5" fill="none" stroke="#f0fdfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="40" y="63" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#155e75" font-weight="bold">CHECK</text>
+</svg>

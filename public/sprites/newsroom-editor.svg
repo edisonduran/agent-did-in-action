@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.22"/>
+  <rect x="12" y="42" width="56" height="22" rx="3" fill="#334155" stroke="#0f172a" stroke-width="2"/>
+  <rect x="20" y="26" width="24" height="16" rx="2" fill="#fef2f2" stroke="#7f1d1d" stroke-width="1.5"/>
+  <rect x="24" y="31" width="16" height="2.5" fill="#dc2626" opacity="0.8"/>
+  <rect x="24" y="36" width="12" height="2.5" fill="#b91c1c" opacity="0.55"/>
+  <path d="M52 18 C52 12 58 10 61 14 C63 17 61 22 57 24 L52 26 Z" fill="#f97316" stroke="#9a3412" stroke-width="1.5"/>
+  <rect x="55" y="24" width="4" height="20" fill="#f59e0b" stroke="#92400e" stroke-width="1.2"/>
+  <circle cx="57" cy="18" r="5" fill="#fb7185" opacity="0.75"/>
+  <path d="M58 24 L66 18" stroke="#38bdf8" stroke-width="2" stroke-dasharray="2 2"/>
+  <text x="40" y="57" text-anchor="middle" font-family="monospace" font-size="6" fill="#e2e8f0" font-weight="bold">EDITOR</text>
+</svg>

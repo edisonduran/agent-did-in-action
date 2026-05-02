@@ -19,7 +19,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You sign the exact recall scope when a contaminated lot is found',
       capabilities: ['recall.notice', 'lot.identify'],
     },
-    spriteUrl: '/sprites/agent-factory.svg',
+    spriteUrl: '/sprites/pharma-manufacturer.svg',
     home: { gx: 1, gy: 2 },
     codeSnippet: [
       '// Manufacturer signs the recall scope for the contaminated lots',
@@ -40,7 +40,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You only authorize a recall after the manufacturer notice verifies',
       capabilities: ['recall.verify', 'recall.authorize'],
     },
-    spriteUrl: '/sprites/agent-store.svg',
+    spriteUrl: '/sprites/pharma-regulator.svg',
     home: { gx: 4, gy: 2 },
     codeSnippet: [
       '// Regulator verifies the notice, then signs the official recall order',
@@ -58,7 +58,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You relay the exact signed regulator order to the pharmacy without changing its scope',
       capabilities: ['recall.relay', 'inventory.route'],
     },
-    spriteUrl: '/sprites/agent-courier.svg',
+    spriteUrl: '/sprites/pharma-wholesaler.svg',
     home: { gx: 5, gy: 4 },
     codeSnippet: [
       '// Wholesaler must relay the regulator order unchanged',
@@ -78,7 +78,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You reject any recall whose signed scope differs from the regulator order',
       capabilities: ['recall.execute', 'recall.reject'],
     },
-    spriteUrl: '/sprites/agent-payment.svg',
+    spriteUrl: '/sprites/pharma-pharmacy.svg',
     home: { gx: 6, gy: 6 },
     codeSnippet: [
       '// Pharmacy verifies the regulator signature before pulling stock',
