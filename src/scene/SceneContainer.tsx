@@ -47,13 +47,15 @@ const HOME = {
 
 interface SceneContainerProps {
   attackerMode: boolean;
+  onBlocked?: (result: InteractionResult) => void;
 }
 
-export function SceneContainer({ attackerMode }: SceneContainerProps) {
+export function SceneContainer({ attackerMode, onBlocked }: SceneContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<PixiScene | null>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
   const attackerRef = useRef(attackerMode);
+  const onBlockedRef = useRef(onBlocked);
   const [ready, setReady] = useState(false);
   const [traces, setTraces] = useState<TraceEntry[]>([]);
   const [lastResult, setLastResult] = useState<InteractionResult | null>(null);
@@ -61,6 +63,10 @@ export function SceneContainer({ attackerMode }: SceneContainerProps) {
   useEffect(() => {
     attackerRef.current = attackerMode;
   }, [attackerMode]);
+
+  useEffect(() => {
+    onBlockedRef.current = onBlocked;
+  }, [onBlocked]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -115,6 +121,12 @@ export function SceneContainer({ attackerMode }: SceneContainerProps) {
           const toId = idForDid(engine, r.payload.to);
           if (fromId && toId) {
             scene.flashLink(fromId, toId, r.verified ? 'verify' : 'block');
+          }
+          if (!r.verified) {
+            // Shake the receiver — it's the agent that detected the bad signature.
+            if (toId) scene.shakeAgent(toId, 700);
+            if (fromId) scene.shakeAgent(fromId, 500);
+            onBlockedRef.current?.(r);
           }
           setLastResult(r);
           appendTrace(setTraces, {

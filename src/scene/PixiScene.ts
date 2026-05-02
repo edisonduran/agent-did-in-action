@@ -42,6 +42,7 @@ interface AgentNode {
   current: GridPoint;
   target: GridPoint;
   travel: { startMs: number; durationMs: number; from: GridPoint } | null;
+  shake: { startMs: number; durationMs: number } | null;
 }
 
 export class PixiScene {
@@ -118,6 +119,7 @@ export class PixiScene {
         current: { ...agent.position },
         target: { ...agent.position },
         travel: null,
+        shake: null,
       };
       this.agents.set(agent.id, node);
       this.applyNodePosition(node);
@@ -135,6 +137,13 @@ export class PixiScene {
       from: { ...node.current },
     };
     node.target = { ...target };
+  }
+
+  /** Make an agent shake horizontally for a short window — used on block. */
+  shakeAgent(id: string, durationMs = 600): void {
+    const node = this.agents.get(id);
+    if (!node) return;
+    node.shake = { startMs: this.elapsedMs, durationMs };
   }
 
   /** Flash a colored line + badge between two agents for ~1.2s. */
@@ -192,19 +201,26 @@ export class PixiScene {
     this.elapsedMs += ticker.deltaMS;
     let dirty = false;
     for (const node of this.agents.values()) {
-      if (!node.travel) continue;
-      const age = this.elapsedMs - node.travel.startMs;
-      const t = Math.min(1, age / node.travel.durationMs);
-      const eased = easeInOut(t);
-      node.current = {
-        gx: node.travel.from.gx + (node.target.gx - node.travel.from.gx) * eased,
-        gy: node.travel.from.gy + (node.target.gy - node.travel.from.gy) * eased,
-      };
+      if (node.travel) {
+        const age = this.elapsedMs - node.travel.startMs;
+        const t = Math.min(1, age / node.travel.durationMs);
+        const eased = easeInOut(t);
+        node.current = {
+          gx: node.travel.from.gx + (node.target.gx - node.travel.from.gx) * eased,
+          gy: node.travel.from.gy + (node.target.gy - node.travel.from.gy) * eased,
+        };
+        dirty = true;
+        if (t >= 1) {
+          node.current = { ...node.target };
+          node.travel = null;
+        }
+      }
       this.applyNodePosition(node);
-      dirty = true;
-      if (t >= 1) {
-        node.current = { ...node.target };
-        node.travel = null;
+      if (node.shake) {
+        const age = this.elapsedMs - node.shake.startMs;
+        if (age >= node.shake.durationMs) {
+          node.shake = null;
+        }
       }
     }
     if (dirty) this.depthSort();
@@ -212,8 +228,18 @@ export class PixiScene {
 
   private applyNodePosition(node: AgentNode): void {
     const screen = gridToScreen(node.current, this.isoConfig);
-    node.sprite.position.set(screen.x, screen.y);
-    node.label.position.set(screen.x, screen.y + 4);
+    let dx = 0;
+    let tint = 0xffffff;
+    if (node.shake) {
+      const age = this.elapsedMs - node.shake.startMs;
+      const t = Math.min(1, age / node.shake.durationMs);
+      const decay = 1 - t;
+      dx = Math.sin(age / 30) * 6 * decay;
+      tint = 0xffaaaa;
+    }
+    node.sprite.tint = tint;
+    node.sprite.position.set(screen.x + dx, screen.y);
+    node.label.position.set(screen.x + dx, screen.y + 4);
   }
 
   private depthSort(): void {

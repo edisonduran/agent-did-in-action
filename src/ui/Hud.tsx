@@ -1,9 +1,16 @@
 interface HudProps {
   attackerMode: boolean;
   onToggleAttacker: (next: boolean) => void;
+  blockedCount: number;
+  onReopenLastBlock?: () => void;
 }
 
-export function Hud({ attackerMode, onToggleAttacker }: HudProps) {
+export function Hud({
+  attackerMode,
+  onToggleAttacker,
+  blockedCount,
+  onReopenLastBlock,
+}: HudProps) {
   return (
     <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-2">
       <div className="pointer-events-auto rounded border border-plaza-border bg-plaza-panel/95 px-3 py-2 backdrop-blur">
@@ -27,11 +34,25 @@ export function Hud({ attackerMode, onToggleAttacker }: HudProps) {
             ? 'The Store→Payment signature gets corrupted in flight. Watch the SDK reject the handoff.'
             : 'All handoffs use real Ed25519 signatures verified by @agentdid/sdk.'}
         </p>
+        {blockedCount > 0 && (
+          <button
+            type="button"
+            onClick={onReopenLastBlock}
+            disabled={!onReopenLastBlock}
+            className="mt-2 flex w-full items-center justify-between rounded border border-plaza-bad/50 bg-plaza-bad/10 px-2 py-1 text-[11px] text-plaza-bad hover:border-plaza-bad disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <span>
+              <span className="font-mono font-bold">{blockedCount}</span> handoff
+              {blockedCount === 1 ? '' : 's'} blocked
+            </span>
+            <span className="text-[10px] uppercase opacity-80">View last →</span>
+          </button>
+        )}
       </div>
 
       <div className="pointer-events-none rounded border border-plaza-border bg-plaza-panel/80 px-3 py-2 text-[11px] text-plaza-dim backdrop-blur">
-        <span className="font-mono text-plaza-accent">Day 3</span> · live sign & verify
-        loop · 2 interactions per cycle
+        <span className="font-mono text-plaza-accent">Day 4</span> · attacker mode + blocked
+        modal
       </div>
     </div>
   );
