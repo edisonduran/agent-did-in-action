@@ -39,7 +39,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
       tooltipHideTimerRef.current = null;
     }
   };
-  const scheduleHideTooltip = (delayMs = 220) => {
+  const scheduleHideTooltip = (delayMs = 1500) => {
     cancelHideTooltip();
     tooltipHideTimerRef.current = setTimeout(() => {
       setTooltip(null);
@@ -258,7 +258,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
       <AgentCodeTooltip
         tooltip={tooltip}
         onMouseEnter={cancelHideTooltip}
-        onMouseLeave={() => scheduleHideTooltip(120)}
+        onMouseLeave={() => scheduleHideTooltip(600)}
       />
     </div>
   );
