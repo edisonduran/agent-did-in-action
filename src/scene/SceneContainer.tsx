@@ -5,6 +5,8 @@ import type { InteractionResult } from '../sim/types';
 import type { SimEvent } from '../sim/events';
 import type { DemoModule, DemoSceneApi } from '../demos/types';
 import { TraceInspector, type TraceEntry } from '../ui/TraceInspector';
+import { AgentCodeTooltip, type AgentTooltipState } from '../ui/AgentCodeTooltip';
+import { snippetForSign, snippetForVerify } from '../ui/codeSnippets';
 import { playCue } from '../sound/cues';
 
 interface SceneContainerProps {
@@ -13,15 +15,20 @@ interface SceneContainerProps {
   onBlocked?: (result: InteractionResult) => void;
 }
 
+const DEFAULT_SNIPPET = '// hover an agent to see the SDK call it just made';
+
 export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<PixiScene | null>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
   const attackerRef = useRef(attackerMode);
   const onBlockedRef = useRef(onBlocked);
+  // Map agentId → most recent SDK snippet (live-updated on every interaction).
+  const lastCodeRef = useRef<Map<string, string>>(new Map());
   const [ready, setReady] = useState(false);
   const [traces, setTraces] = useState<TraceEntry[]>([]);
   const [lastResult, setLastResult] = useState<InteractionResult | null>(null);
+  const [tooltip, setTooltip] = useState<AgentTooltipState | null>(null);
 
   useEffect(() => {
     attackerRef.current = attackerMode;
@@ -40,6 +47,14 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
     setReady(false);
     setTraces([]);
     setLastResult(null);
+    setTooltip(null);
+
+    // Seed each agent's snippet with its declared default (or a generic placeholder).
+    const seeded = new Map<string, string>();
+    for (const a of demo.agents) {
+      seeded.set(a.spec.id, a.codeSnippet ?? DEFAULT_SNIPPET);
+    }
+    lastCodeRef.current = seeded;
 
     const scene = new PixiScene(containerRef.current);
     sceneRef.current = scene;
@@ -50,6 +65,9 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
       moveAgent: (id, to, ms) => scene.moveAgent(id, to, ms),
       wait: (ms) => new Promise((res) => setTimeout(res, ms)),
     };
+
+    const nameFor = (id: string): string =>
+      demo.agents.find((a) => a.spec.id === id)?.spec.name ?? id;
 
     (async () => {
       await scene.init();
@@ -68,11 +86,37 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
       await scene.placeAgents(placed);
       if (cancelled) return;
 
+      scene.setHoverHandlers({
+        onEnter: (id, x, y) => {
+          if (cancelled) return;
+          setTooltip({
+            agentId: id,
+            agentName: nameFor(id),
+            code: lastCodeRef.current.get(id) ?? DEFAULT_SNIPPET,
+            x,
+            y,
+          });
+        },
+        onMove: (id, x, y) => {
+          if (cancelled) return;
+          setTooltip((prev) =>
+            prev && prev.agentId === id
+              ? { ...prev, x, y, code: lastCodeRef.current.get(id) ?? prev.code }
+              : prev,
+          );
+        },
+        onLeave: () => {
+          if (cancelled) return;
+          setTooltip(null);
+        },
+      });
+
       engine.bus.onAny((evt: SimEvent) => {
         if (evt.type === 'interaction.signed') {
           const r = evt.result;
           const fromId = idForDid(engine, r.signerDid);
           const toId = idForDid(engine, r.payload.to);
+          if (fromId) lastCodeRef.current.set(fromId, snippetForSign(r));
           if (fromId && toId) scene.flashLink(fromId, toId, 'sign');
           if (fromId) scene.glowAgent(fromId, 'sign', 700);
           playCue('sign');
@@ -89,6 +133,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
           const r = evt.result;
           const fromId = idForDid(engine, r.signerDid);
           const toId = idForDid(engine, r.payload.to);
+          if (toId) lastCodeRef.current.set(toId, snippetForVerify(r));
           if (fromId && toId) {
             scene.flashLink(fromId, toId, r.verified ? 'verify' : 'block');
           }
@@ -102,6 +147,12 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
             onBlockedRef.current?.(r);
           }
           setLastResult(r);
+          // If the tooltip is currently showing the verifier, refresh its code in place.
+          setTooltip((prev) =>
+            prev && toId && prev.agentId === toId
+              ? { ...prev, code: snippetForVerify(r) }
+              : prev,
+          );
           appendTrace(setTraces, {
             phase: r.verified ? 'verified' : 'blocked',
             action: r.payload.action,
@@ -158,6 +209,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
           </div>
         </div>
       )}
+      <AgentCodeTooltip tooltip={tooltip} />
     </div>
   );
 }

@@ -31,6 +31,12 @@ export interface PlacedAgent {
   label: string;
 }
 
+export interface AgentHoverHandlers {
+  onEnter?: (id: string, screenX: number, screenY: number) => void;
+  onMove?: (id: string, screenX: number, screenY: number) => void;
+  onLeave?: (id: string) => void;
+}
+
 const GRID_SIZE = 8;
 const TILE_WIDTH = 96;
 const TILE_COLOR_A = 0x1f2a37;
@@ -54,6 +60,7 @@ export class PixiScene {
   private fxLayer = new Container();
   private agentLayer = new Container();
   private agents = new Map<string, AgentNode>();
+  private hoverHandlers: AgentHoverHandlers = {};
   private isoConfig: IsoConfig = {
     tileWidth: TILE_WIDTH,
     originX: 0,
@@ -104,6 +111,20 @@ export class PixiScene {
       this.agentLayer.addChild(halo);
       const sprite = new Sprite(texture);
       sprite.anchor.set(0.5, 1);
+      sprite.eventMode = 'static';
+      sprite.cursor = 'pointer';
+      const agentId = agent.id;
+      sprite.on('pointerover', (ev) => {
+        const g = ev.global;
+        this.hoverHandlers.onEnter?.(agentId, g.x, g.y);
+      });
+      sprite.on('pointermove', (ev) => {
+        const g = ev.global;
+        this.hoverHandlers.onMove?.(agentId, g.x, g.y);
+      });
+      sprite.on('pointerout', () => {
+        this.hoverHandlers.onLeave?.(agentId);
+      });
       this.agentLayer.addChild(sprite);
 
       const label = new Text({
@@ -132,6 +153,11 @@ export class PixiScene {
       this.applyNodePosition(node);
     }
     this.depthSort();
+  }
+
+  /** Subscribe to hover events on agent sprites (used for the SDK code tooltip). */
+  setHoverHandlers(handlers: AgentHoverHandlers): void {
+    this.hoverHandlers = handlers;
   }
 
   /** Animate an agent from its current cell to a new cell. */

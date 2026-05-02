@@ -45,6 +45,15 @@ export interface DemoAgent {
   spec: AgentSpec;
   spriteUrl: string;
   home: GridPoint;
+  /**
+   * Optional default SDK snippet shown in the hover tooltip BEFORE this agent
+   * has performed any action. Once it signs / verifies, the host overrides
+   * this with the actual call (with real payload + signature snippets).
+   *
+   * Multi-line strings are fine; rendered in a monospace tooltip.
+   * Keep it short — ideally ≤ 6 lines.
+   */
+  codeSnippet?: string;
 }
 
 /**

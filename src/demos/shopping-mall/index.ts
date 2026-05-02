@@ -21,6 +21,14 @@ const AGENTS: DemoAgent[] = [
     },
     spriteUrl: '/sprites/agent-shopper.svg',
     home: { gx: 1, gy: 1 },
+    codeSnippet: [
+      "// Shopper greets the store on behalf of its human",
+      "const signed = await shopper.sign({",
+      "  to: store.did,",
+      "  action: 'greet',",
+      "  nonce: crypto.randomUUID(),",
+      "});",
+    ].join('\n'),
   },
   {
     spec: {
@@ -33,6 +41,15 @@ const AGENTS: DemoAgent[] = [
     },
     spriteUrl: '/sprites/agent-store.svg',
     home: { gx: 5, gy: 2 },
+    codeSnippet: [
+      "// Store quotes a price and forwards a signed charge",
+      "const signed = await store.sign({",
+      "  to: payment.did,",
+      "  action: 'charge',",
+      "  amount: 42,",
+      "  nonce: crypto.randomUUID(),",
+      "});",
+    ].join('\n'),
   },
   {
     spec: {
@@ -45,6 +62,15 @@ const AGENTS: DemoAgent[] = [
     },
     spriteUrl: '/sprites/agent-payment.svg',
     home: { gx: 3, gy: 5 },
+    codeSnippet: [
+      "// Payment bot verifies the signature before charging",
+      "const ok = await AgentRuntime.verifyClaim(",
+      "  signerDid,",
+      "  payload,",
+      "  signature,",
+      ");",
+      "if (!ok) throw new Error('blocked: tampered-signature');",
+    ].join('\n'),
   },
 ];
 

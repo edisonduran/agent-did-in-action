@@ -21,6 +21,15 @@ const AGENTS: DemoAgent[] = [
     },
     spriteUrl: '/sprites/agent-factory.svg',
     home: { gx: 1, gy: 2 },
+    codeSnippet: [
+      "// Factory signs every outgoing shipment manifest",
+      "const signed = await factory.sign({",
+      "  to: receiver.did,",
+      "  action: 'ship.manifest',",
+      "  amount: 12, // pallet count",
+      "  nonce: crypto.randomUUID(),",
+      "});",
+    ].join('\n'),
   },
   {
     spec: {
@@ -33,6 +42,14 @@ const AGENTS: DemoAgent[] = [
     },
     spriteUrl: '/sprites/agent-courier.svg',
     home: { gx: 4, gy: 3 },
+    codeSnippet: [
+      "// Honest courier MUST forward the factory's payload as-is",
+      "await courier.relay({",
+      "  to: receiver.did,",
+      "  payload: factoryPayload,   // do NOT mutate",
+      "  signature: factorySignature,",
+      "});",
+    ].join('\n'),
   },
   {
     spec: {
@@ -45,6 +62,15 @@ const AGENTS: DemoAgent[] = [
     },
     spriteUrl: '/sprites/agent-warehouse.svg',
     home: { gx: 6, gy: 5 },
+    codeSnippet: [
+      "// Receiver verifies the FACTORY signature against the relayed payload",
+      "const ok = await AgentRuntime.verifyClaim(",
+      "  factoryDid,",
+      "  relayedPayload,",
+      "  factorySignature,",
+      ");",
+      "if (!ok) reject('manifest-altered');",
+    ].join('\n'),
   },
 ];
 
