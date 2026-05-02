@@ -19,7 +19,12 @@ npm install
 cp -r src/demos/shopping-mall src/demos/your-id
 
 # 2. Edit manifest.json (id, title, author, license=Apache-2.0|MIT, official=false).
-# 3. Edit index.ts: change agents, scenario, choreography.
+# 3. Edit index.ts. Required fields on the exported DemoModule:
+#    - agents[]: each AGENT must have a `codeSnippet` (default tooltip content).
+#    - useCase: { scenario, whyItMatters } shown in the side panel.
+#    - attacker: { kind: 'malicious-agent' | 'mitm-channel', ... }
+#                 REQUIRED if your scenario calls opts.attackerMode().
+#    See docs/DEMO-SPEC.md §2.1 / §2.2 / §2.3 for the exact shapes.
 # 4. Add tests/<your-id>.test.ts covering both attackerMode states.
 # 5. Register the demo in src/demos/_registry.ts (one line).
 
@@ -27,6 +32,7 @@ npm run validate:demos
 npm run lint
 npm test -- --run
 npm run build
+npm run check:bundles    # enforces the 150 KB gz cap per demo
 
 # Open a PR using the demo template (.github/PULL_REQUEST_TEMPLATE/demo.md).
 ```
@@ -48,8 +54,23 @@ npm run build
 ## Local checks (one-liner)
 
 ```bash
-npm run validate:demos && npm run lint && npm test -- --run && npm run build
+npm run validate:demos && npm run lint && npm test -- --run && npm run build && npm run check:bundles
 ```
+
+## Automated CI guardrails
+
+CI runs the same commands you do locally, plus enforces:
+
+| Gate | Tool | Rule |
+| --- | --- | --- |
+| Manifest schema | `validate:demos` | Required fields, kebab-case id, license allowlist, hero ≤ 200 KB. |
+| Attacker contract | `validate:demos` | If your `index.ts` calls `opts.attackerMode()`, it MUST also export an `attacker` field (DEMO-SPEC §2.2 / MUST #11). The validator greps for this. |
+| Type contract | `lint` (`tsc --noEmit`) | `useCase` and per-agent `codeSnippet` are TypeScript-required. Forgetting either fails the build. |
+| Bundle budget | `check:bundles` | After `npm run build`, every `dist/assets/demo-<id>-*.js` is gzipped in memory and rejected if > 150 KB (DEMO-SPEC MUST #5). |
+| Tests | `vitest` + Playwright | Your `tests/<your-id>.test.ts` must cover both attacker modes; the host's e2e smoke must still pass. |
+
+If any of these fail on your PR, fix locally and push again — maintainers will
+not merge a red CI.
 
 ## Reporting bugs / proposing core changes
 

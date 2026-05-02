@@ -131,6 +131,20 @@ agent-did-in-action/
 
 ---
 
+## Contributing a demo
+
+The gallery is open for community demos. The contract is short and CI-enforced:
+
+- Read [`docs/DEMO-SPEC.md`](docs/DEMO-SPEC.md) — the binding spec.
+- Follow the quick start in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+- Open a PR with [`.github/PULL_REQUEST_TEMPLATE/demo.md`](.github/PULL_REQUEST_TEMPLATE/demo.md).
+
+Required surface (TypeScript-enforced + CI-checked): every demo declares
+a `useCase`, a `codeSnippet` per agent, and an `attacker` whenever the
+scenario reacts to attacker mode. Bundle cap: 150 KB gz.
+
+---
+
 ## License
 
 [Apache-2.0](LICENSE) — same as the SDK and the spec.
