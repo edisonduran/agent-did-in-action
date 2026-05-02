@@ -137,6 +137,7 @@ The gallery is open for community demos. The contract is short and CI-enforced:
 
 - Read [`docs/DEMO-SPEC.md`](docs/DEMO-SPEC.md) — the binding spec.
 - Follow the quick start in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+- Need an idea? Pick one from the recommended demo backlog in [`CONTRIBUTING.md`](CONTRIBUTING.md#recommended-demo-backlog).
 - Open a PR with [`.github/PULL_REQUEST_TEMPLATE/demo.md`](.github/PULL_REQUEST_TEMPLATE/demo.md).
 
 Required surface (TypeScript-enforced + CI-checked): every demo declares

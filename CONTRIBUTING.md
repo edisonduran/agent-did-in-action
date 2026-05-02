@@ -37,6 +37,34 @@ npm run check:bundles    # enforces the 150 KB gz cap per demo
 # Open a PR using the demo template (.github/PULL_REQUEST_TEMPLATE/demo.md).
 ```
 
+## Recommended demo backlog
+
+If you want to contribute but do not yet have a scenario in mind, pick one of
+the cases below. They were chosen because they fit the current host well:
+browser-only, no outbound network, 2-4 agents, a meaningful `attackerMode`
+branch, and a clean educational story for the side panel + hover tooltip.
+
+These are recommendations, not reservations. First merged PR wins. Before you
+invest heavily, check open PRs to avoid duplicating work.
+
+| Suggested id | What the demo proves | Suggested attacker | Difficulty | Good starting point |
+| --- | --- | --- | --- | --- |
+| `invoice-approval-chain` | Multi-hop trust and provenance. An employee request flows through manager approval and finance release before an ERP agent accepts it. | A malicious manager changes the amount after the employee signature. | Medium | Copy `src/demos/shopping-mall` |
+| `replay-safe-webhook` | Anti-replay protection on a signed HTTP-style callback or pickup confirmation. The receiver must reject the same signed request when replayed. | A MITM replays a previously valid request byte-for-byte. | Medium | Copy `src/demos/shopping-mall` |
+| `delegated-refund-cap` | Capability scoping / least privilege. A support bot can preview or request a small refund, but finance must sign anything above a cap. | A malicious support bot bumps the amount or swaps the action. | Medium | Copy `src/demos/shopping-mall` |
+| `quote-broker-chain` | Cross-organization quote integrity. A buyer accepts a supplier quote only if the broker relays it without altering the signed payload. | A malicious broker edits the quoted price before forwarding. | Medium | Copy `src/demos/supply-chain` |
+| `revoked-supplier` | Revocation-aware verification. One handoff succeeds, then the sender is revoked and the next handoff must fail for a real cryptographic reason. | A revoked supplier keeps sending signed claims after losing trust. | Medium | Copy `src/demos/supply-chain` |
+| `key-rotation-handshake` | Verification-key rotation. The receiver must accept the post-rotation signature only after resolving the updated DID document. | A stale verifier keeps trusting the pre-rotation key or a replayed old signature. | Advanced | Copy `src/demos/shopping-mall` |
+| `dual-signoff-release` | Two independent approvals before release. A warehouse acts only after compliance and finance have both signed the release order. | One approver tries to release with only one signature or with an altered second approval. | Advanced | Copy `src/demos/shopping-mall` |
+| `customs-clearance-chain` | Cross-border chain-of-custody. Exporter, customs broker, and importer each verify the prior hop before goods clear. | A MITM alters the declared goods or pallet count in transit. | Medium | Copy `src/demos/supply-chain` |
+
+### How to take one
+
+1. Use the suggested id as your folder name and branch name: `demo/<id>`.
+2. Open a draft PR early so others can see the case is in flight.
+3. If you want to propose a different idea, do it - this backlog is meant to
+  accelerate good contributions, not limit them.
+
 ## What we look for in review
 
 - **Educational value**: every demo should make some property of the SDK
