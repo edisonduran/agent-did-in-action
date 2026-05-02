@@ -11,13 +11,17 @@ export interface AgentTooltipState {
 
 interface Props {
   tooltip: AgentTooltipState | null;
+  /** Called when the mouse enters/leaves the tooltip box itself.
+   *  The host uses this to keep the tooltip open while the user reaches the copy button. */
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 /**
  * Floating, monospace tooltip showing the SDK code an agent ran (or will run).
  * Anchored above the sprite. Pure HTML overlay — Pixi stays untouched.
  */
-export function AgentCodeTooltip({ tooltip }: Props) {
+export function AgentCodeTooltip({ tooltip, onMouseEnter, onMouseLeave }: Props) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -38,13 +42,15 @@ export function AgentCodeTooltip({ tooltip }: Props) {
 
   // Position above the sprite, but clamp so it never escapes the canvas.
   const left = Math.max(8, Math.min(tooltip.x - 160, window.innerWidth - 340));
-  const top = Math.max(8, tooltip.y - 180);
+  const top = Math.max(8, tooltip.y - 200);
 
   return (
     <div
       role="tooltip"
       aria-label={`SDK code for ${tooltip.agentName}`}
       data-testid="agent-code-tooltip"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       className="pointer-events-auto absolute z-30 w-[320px] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-3 shadow-2xl shadow-cyan-500/10 backdrop-blur"
       style={{ left, top }}
     >

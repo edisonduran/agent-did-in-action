@@ -29,6 +29,23 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
   const [traces, setTraces] = useState<TraceEntry[]>([]);
   const [lastResult, setLastResult] = useState<InteractionResult | null>(null);
   const [tooltip, setTooltip] = useState<AgentTooltipState | null>(null);
+  // Pending hide-tooltip timer. Lets the cursor travel from the sprite to the
+  // tooltip box (e.g. to reach the copy button) without losing the popup.
+  const tooltipHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelHideTooltip = () => {
+    if (tooltipHideTimerRef.current) {
+      clearTimeout(tooltipHideTimerRef.current);
+      tooltipHideTimerRef.current = null;
+    }
+  };
+  const scheduleHideTooltip = (delayMs = 220) => {
+    cancelHideTooltip();
+    tooltipHideTimerRef.current = setTimeout(() => {
+      setTooltip(null);
+      tooltipHideTimerRef.current = null;
+    }, delayMs);
+  };
 
   useEffect(() => {
     attackerRef.current = attackerMode;
@@ -109,6 +126,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
       scene.setHoverHandlers({
         onEnter: (id, x, y) => {
           if (cancelled) return;
+          cancelHideTooltip();
           setTooltip({
             agentId: id,
             agentName: nameFor(id),
@@ -119,6 +137,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
         },
         onMove: (id, x, y) => {
           if (cancelled) return;
+          cancelHideTooltip();
           setTooltip((prev) =>
             prev && prev.agentId === id
               ? { ...prev, x, y, code: lastCodeRef.current.get(id) ?? prev.code }
@@ -127,7 +146,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
         },
         onLeave: () => {
           if (cancelled) return;
-          setTooltip(null);
+          scheduleHideTooltip();
         },
       });
 
@@ -212,6 +231,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
+      cancelHideTooltip();
       scene.destroy();
       engine.reset();
       sceneRef.current = null;
@@ -235,7 +255,11 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
           </div>
         </div>
       )}
-      <AgentCodeTooltip tooltip={tooltip} />
+      <AgentCodeTooltip
+        tooltip={tooltip}
+        onMouseEnter={cancelHideTooltip}
+        onMouseLeave={() => scheduleHideTooltip(120)}
+      />
     </div>
   );
 }
