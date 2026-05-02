@@ -12,6 +12,7 @@
     "test": "vitest",
     "smoke": "node scripts/smoke.mjs",
     "validate:demos": "node scripts/validate-demos.mjs",
+    "check:bundles": "node scripts/check-demo-bundles.mjs",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps chromium"
   },

@@ -101,6 +101,20 @@ function validateFolder(folder) {
     const sz = statSync(heroPath).size;
     if (sz > 200 * 1024) return fail(`${id}: hero ${sz}B > 200KB cap`);
   }
+  // MUST #11: attacker declared iff scenario reads opts.attackerMode()
+  const src = readFileSync(indexTs, 'utf8');
+  // Strip line and block comments before scanning so commented-out references don't trigger.
+  const stripped = src
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  const usesAttackerMode = /\battackerMode\s*\(\s*\)/.test(stripped);
+  // Match `attacker:` as a top-level export key (DemoModule field), not nested.
+  const declaresAttacker = /\battacker\s*:/.test(stripped);
+  if (usesAttackerMode && !declaresAttacker) {
+    return fail(
+      `${id}: scenario calls opts.attackerMode() but module does not declare an \`attacker\` field (MUST #11 in DEMO-SPEC §2.2)`,
+    );
+  }
   return true;
 }
 

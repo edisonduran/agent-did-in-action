@@ -39,6 +39,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check demo bundle sizes (≤ 150 KB gz, MUST #5)
+        run: npm run check:bundles
+
       - name: Install Playwright (chromium only)
         run: npx playwright install --with-deps chromium
 
