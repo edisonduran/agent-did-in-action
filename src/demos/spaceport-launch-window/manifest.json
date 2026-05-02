@@ -1,0 +1,13 @@
+{
+  "id": "spaceport-launch-window",
+  "spec_version": "1",
+  "title": "Spaceport Launch Window",
+  "tagline": "Weather, range safety, flight control, and the launch gate coordinate a signed go/no-go chain for a launch window.",
+  "author": { "name": "Agent-DID core team", "github": "edisonduran" },
+  "license": "Apache-2.0",
+  "sdk_version": "^0.2.0",
+  "tags": ["space", "operations", "mitm", "advanced-official"],
+  "official": true,
+  "accent_color": "#0ea5e9",
+  "problem": "Autonomous launch operations need to prove the final gate saw the exact clearance chain, not a forged or corrupted last-hop signal."
+}

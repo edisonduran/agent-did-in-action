@@ -1,0 +1,13 @@
+{
+  "id": "newsroom-publish-chain",
+  "spec_version": "1",
+  "title": "Newsroom Publish Chain",
+  "tagline": "A reporter, fact-checker, editor, and publisher preserve editorial provenance across a four-agent release chain.",
+  "author": { "name": "Agent-DID core team", "github": "edisonduran" },
+  "license": "Apache-2.0",
+  "sdk_version": "^0.2.0",
+  "tags": ["media", "provenance", "multi-hop", "advanced-official"],
+  "official": true,
+  "accent_color": "#f97316",
+  "problem": "Editorial AI pipelines need to prove the story that gets published is the same one that was checked and approved upstream."
+}

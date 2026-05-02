@@ -1,0 +1,13 @@
+{
+  "id": "pharma-recall-cascade",
+  "spec_version": "1",
+  "title": "Pharma Recall Cascade",
+  "tagline": "A manufacturer, regulator, wholesaler, and hospital pharmacy preserve the exact scope of an emergency drug recall.",
+  "author": { "name": "Agent-DID core team", "github": "edisonduran" },
+  "license": "Apache-2.0",
+  "sdk_version": "^0.2.0",
+  "tags": ["healthcare", "safety", "recall", "advanced-official"],
+  "official": true,
+  "accent_color": "#ef4444",
+  "problem": "Safety-critical recall chains fail if a middleman can shrink or expand the affected batch scope without getting caught."
+}

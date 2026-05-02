@@ -14,7 +14,10 @@
 
 import type { DemoManifest, DemoModule } from './types';
 
+import newsroomPublishChainManifest from './newsroom-publish-chain/manifest.json';
+import pharmaRecallCascadeManifest from './pharma-recall-cascade/manifest.json';
 import shoppingMallManifest from './shopping-mall/manifest.json';
+import spaceportLaunchWindowManifest from './spaceport-launch-window/manifest.json';
 import supplyChainManifest from './supply-chain/manifest.json';
 
 export interface RegistryEntry {
@@ -24,8 +27,20 @@ export interface RegistryEntry {
 
 export const DEMO_REGISTRY: readonly RegistryEntry[] = [
   {
+    manifest: newsroomPublishChainManifest as DemoManifest,
+    load: () => import('./newsroom-publish-chain/index').then((m) => m.default),
+  },
+  {
+    manifest: pharmaRecallCascadeManifest as DemoManifest,
+    load: () => import('./pharma-recall-cascade/index').then((m) => m.default),
+  },
+  {
     manifest: shoppingMallManifest as DemoManifest,
     load: () => import('./shopping-mall/index').then((m) => m.default),
+  },
+  {
+    manifest: spaceportLaunchWindowManifest as DemoManifest,
+    load: () => import('./spaceport-launch-window/index').then((m) => m.default),
   },
   {
     manifest: supplyChainManifest as DemoManifest,
