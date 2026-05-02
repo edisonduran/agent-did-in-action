@@ -61,6 +61,13 @@ export class PixiScene {
   private agentLayer = new Container();
   private agents = new Map<string, AgentNode>();
   private hoverHandlers: AgentHoverHandlers = {};
+  private attackerLayer = new Container();
+  private attackerMarker:
+    | { kind: 'agent'; agentId: string }
+    | { kind: 'channel'; fromId: string; toId: string }
+    | null = null;
+  private attackerGfx: Graphics | null = null;
+  private attackerText: Text | null = null;
   private isoConfig: IsoConfig = {
     tileWidth: TILE_WIDTH,
     originX: 0,
@@ -88,6 +95,7 @@ export class PixiScene {
     this.root.addChild(this.floor);
     this.root.addChild(this.fxLayer);
     this.root.addChild(this.agentLayer);
+    this.root.addChild(this.attackerLayer);
 
     this.handleResize();
     window.addEventListener('resize', this.resizeHandler);
@@ -158,6 +166,85 @@ export class PixiScene {
   /** Subscribe to hover events on agent sprites (used for the SDK code tooltip). */
   setHoverHandlers(handlers: AgentHoverHandlers): void {
     this.hoverHandlers = handlers;
+  }
+
+  /**
+   * Show (or hide) a persistent attacker badge.
+   *  - kind 'agent'   → skull anchored above a malicious agent's sprite
+   *  - kind 'channel' → skull at the midpoint of a compromised channel
+   *  - null           → clear the marker
+   */
+  setAttackerMarker(
+    marker:
+      | { kind: 'agent'; agentId: string }
+      | { kind: 'channel'; fromId: string; toId: string }
+      | null,
+  ): void {
+    this.attackerMarker = marker;
+    if (!marker) {
+      this.clearAttackerMarker();
+      return;
+    }
+    if (!this.attackerGfx) {
+      this.attackerGfx = new Graphics();
+      this.attackerLayer.addChild(this.attackerGfx);
+    }
+    if (!this.attackerText) {
+      this.attackerText = new Text({
+        text: '\u2620',
+        style: new TextStyle({
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: 18,
+          fill: 0xfde047,
+          fontWeight: 'bold',
+        }),
+      });
+      this.attackerText.anchor.set(0.5);
+      this.attackerLayer.addChild(this.attackerText);
+    }
+    this.updateAttackerMarker();
+  }
+
+  private clearAttackerMarker(): void {
+    if (this.attackerGfx) {
+      this.attackerLayer.removeChild(this.attackerGfx);
+      this.attackerGfx.destroy();
+      this.attackerGfx = null;
+    }
+    if (this.attackerText) {
+      this.attackerLayer.removeChild(this.attackerText);
+      this.attackerText.destroy();
+      this.attackerText = null;
+    }
+  }
+
+  private updateAttackerMarker(): void {
+    if (!this.attackerMarker || !this.attackerGfx || !this.attackerText) return;
+    let x = 0;
+    let y = 0;
+    if (this.attackerMarker.kind === 'agent') {
+      const node = this.agents.get(this.attackerMarker.agentId);
+      if (!node) return;
+      const s = gridToScreen(node.current, this.isoConfig);
+      x = s.x;
+      y = s.y - 78;
+    } else {
+      const a = this.agents.get(this.attackerMarker.fromId);
+      const b = this.agents.get(this.attackerMarker.toId);
+      if (!a || !b) return;
+      const aPos = gridToScreen(a.current, this.isoConfig);
+      const bPos = gridToScreen(b.current, this.isoConfig);
+      x = (aPos.x + bPos.x) / 2;
+      y = (aPos.y + bPos.y) / 2 - 56;
+    }
+    // Pulsing radius for visibility
+    const pulse = 1 + Math.sin(this.elapsedMs / 220) * 0.15;
+    this.attackerGfx.clear();
+    this.attackerGfx
+      .circle(x, y, 14 * pulse)
+      .fill({ color: 0x111827, alpha: 0.92 })
+      .stroke({ color: 0xfde047, width: 2, alpha: 0.95 });
+    this.attackerText.position.set(x, y);
   }
 
   /** Animate an agent from its current cell to a new cell. */
@@ -265,6 +352,7 @@ export class PixiScene {
       }
     }
     if (dirty) this.depthSort();
+    this.updateAttackerMarker();
   }
 
   private applyNodePosition(node: AgentNode): void {

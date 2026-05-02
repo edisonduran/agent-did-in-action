@@ -76,10 +76,54 @@ export interface DemoScenario {
   runOnce(): Promise<InteractionResult[]>;
 }
 
+/**
+ * Plain-language description of WHAT this demo simulates and WHY it matters.
+ * Rendered in the right-hand panel above the live trace.
+ */
+export interface DemoUseCase {
+  /** 1–3 sentences: the real-world situation being modeled. */
+  scenario: string;
+  /** 1–2 sentences: what would go wrong without DIDs / signed claims. */
+  whyItMatters: string;
+}
+
+/**
+ * Who the attacker is in this demo when the user toggles "Attacker mode".
+ * Two flavours:
+ *  - `malicious-agent`: one of the demo's own agents misbehaves
+ *    (e.g. courier rewrites the manifest).
+ *  - `mitm-channel`: a network-level adversary tampers with bytes in
+ *    transit between two honest agents.
+ */
+export type DemoAttacker =
+  | {
+      kind: 'malicious-agent';
+      /** id of the agent (must exist in `agents[]`). */
+      agentId: string;
+      /** Short label, e.g. "Courier-Logistics-12 (rogue)". */
+      label: string;
+      /** 1–2 sentences explaining what the attacker is doing. */
+      description: string;
+    }
+  | {
+      kind: 'mitm-channel';
+      /** id of the sender (honest). */
+      from: string;
+      /** id of the receiver (honest). */
+      to: string;
+      /** Short label, e.g. "MITM on Store → Payment". */
+      label: string;
+      description: string;
+    };
+
 /** The full demo bundle. Each demo folder exports one of these as default. */
 export interface DemoModule {
   manifest: DemoManifest;
   agents: DemoAgent[];
+  /** Optional narrative shown in the side panel. */
+  useCase?: DemoUseCase;
+  /** Optional attacker model surfaced when attackerMode is ON. */
+  attacker?: DemoAttacker;
   /**
    * Build the scenario. Called once per host mount.
    * MUST use the supplied engine for all signing/verification.

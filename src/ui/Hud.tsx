@@ -7,6 +7,7 @@ interface HudProps {
   onToggleMute: () => void;
   demoTitle?: string;
   onBackToGallery?: () => void;
+  attackerLabel?: string;
 }
 
 export function Hud({
@@ -18,6 +19,7 @@ export function Hud({
   onToggleMute,
   demoTitle,
   onBackToGallery,
+  attackerLabel,
 }: HudProps) {
   return (
     <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-2">
@@ -60,6 +62,11 @@ export function Hud({
             ? 'A handoff signature gets tampered with in flight. Watch the SDK reject it.'
             : 'All handoffs use real Ed25519 signatures verified by @agentdid/sdk.'}
         </p>
+        {attackerMode && attackerLabel && (
+          <p className="mt-1 max-w-[260px] text-[11px] font-semibold text-plaza-bad">
+            <span aria-hidden>☠</span> {attackerLabel}
+          </p>
+        )}
         {blockedCount > 0 && (
           <button
             type="button"

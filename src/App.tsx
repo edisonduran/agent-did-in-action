@@ -166,6 +166,7 @@ export default function App() {
               onToggleMute={handleToggleMute}
               demoTitle={demo.manifest.title}
               onBackToGallery={handleBack}
+              attackerLabel={demo.attacker?.label}
             />
             {modalOpen && lastBlocked && (
               <BlockedModal

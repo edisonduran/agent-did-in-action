@@ -174,6 +174,20 @@ async function choreography(scene: DemoSceneApi): Promise<void> {
 const demo: DemoModule = {
   manifest: manifest as DemoModule['manifest'],
   agents: AGENTS,
+  useCase: {
+    scenario:
+      'A shopping agent buys clothes on behalf of its human, the store agent quotes a price and forwards a signed charge to a payment-bot. Every handoff is a signed claim against the agent’s DID.',
+    whyItMatters:
+      'Without DIDs, any party on the network could replay or modify the charge and the payment-bot would have no way to tell. With DIDs, a single flipped bit invalidates the signature and the bot rejects the charge automatically.',
+  },
+  attacker: {
+    kind: 'mitm-channel',
+    from: 'store',
+    to: 'payment',
+    label: 'MITM on Store → Payment',
+    description:
+      'A man-in-the-middle on the network between the store and the payment-bot flips one byte of the signature in flight. The store and the bot are honest — the attacker is the channel itself.',
+  },
   createScenario,
   choreography,
 };

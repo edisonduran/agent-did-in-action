@@ -171,6 +171,19 @@ async function choreography(scene: DemoSceneApi): Promise<void> {
 const demo: DemoModule = {
   manifest: manifest as DemoModule['manifest'],
   agents: AGENTS,
+  useCase: {
+    scenario:
+      'A factory in Berlin signs a shipment manifest (12 pallets) addressed to a receiver in Madrid. A courier transports the goods and is supposed to forward the manifest unchanged.',
+    whyItMatters:
+      'A dishonest courier could inflate the pallet count to bill more, or hide a shortfall. Because the receiver verifies the FACTORY’s signature against the relayed payload, any tampering by the courier breaks the signature and the shipment is rejected.',
+  },
+  attacker: {
+    kind: 'malicious-agent',
+    agentId: 'courier',
+    label: 'Courier-Logistics-12 (rogue)',
+    description:
+      'The courier rewrites amount: 12 → 99 in the manifest before relaying it to the receiver, while keeping the factory’s original signature. Verification will fail with manifest-altered.',
+  },
   createScenario,
   choreography,
 };

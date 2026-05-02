@@ -38,6 +38,26 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
     onBlockedRef.current = onBlocked;
   }, [onBlocked]);
 
+  // Toggle the persistent attacker badge on the canvas when attacker mode flips
+  // (or when the demo declares a different attacker).
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    if (!attackerMode || !demo.attacker) {
+      scene.setAttackerMarker(null);
+      return;
+    }
+    if (demo.attacker.kind === 'malicious-agent') {
+      scene.setAttackerMarker({ kind: 'agent', agentId: demo.attacker.agentId });
+    } else {
+      scene.setAttackerMarker({
+        kind: 'channel',
+        fromId: demo.attacker.from,
+        toId: demo.attacker.to,
+      });
+    }
+  }, [attackerMode, demo, ready]);
+
   // Re-mount the engine + scene whenever the user picks a different demo.
   useEffect(() => {
     if (!containerRef.current) return;
@@ -205,7 +225,13 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
       {ready && (
         <div className="pointer-events-none absolute inset-0 flex">
           <div className="ml-auto h-full w-[360px] pointer-events-auto">
-            <TraceInspector traces={traces} latest={lastResult} attacker={attackerMode} />
+            <TraceInspector
+              traces={traces}
+              latest={lastResult}
+              attacker={attackerMode}
+              useCase={demo.useCase}
+              attackerInfo={demo.attacker}
+            />
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
 import type { InteractionPayload, InteractionResult } from '../sim/types';
+import type { DemoAttacker, DemoUseCase } from '../demos/types';
 
 export interface TraceEntry {
   phase: 'signed' | 'verified' | 'blocked';
@@ -14,9 +15,17 @@ interface TraceInspectorProps {
   traces: TraceEntry[];
   latest: InteractionResult | null;
   attacker: boolean;
+  useCase?: DemoUseCase;
+  attackerInfo?: DemoAttacker;
 }
 
-export function TraceInspector({ traces, latest, attacker }: TraceInspectorProps) {
+export function TraceInspector({
+  traces,
+  latest,
+  attacker,
+  useCase,
+  attackerInfo,
+}: TraceInspectorProps) {
   return (
     <aside className="flex h-full flex-col border-l border-plaza-border bg-plaza-panel/95 backdrop-blur">
       <header className="border-b border-plaza-border px-4 py-3">
@@ -32,6 +41,46 @@ export function TraceInspector({ traces, latest, attacker }: TraceInspectorProps
           Real signatures from <span className="font-mono">@agentdid/sdk</span>.
         </p>
       </header>
+
+      {useCase && (
+        <section className="border-b border-plaza-border px-4 py-3">
+          <h3 className="mb-1 text-[10px] font-bold uppercase text-plaza-dim">
+            Use case
+          </h3>
+          <p className="text-[12px] leading-snug text-plaza-text">
+            {useCase.scenario}
+          </p>
+          <p className="mt-2 text-[11px] leading-snug text-plaza-dim">
+            <span className="font-semibold text-plaza-accent">Why it matters: </span>
+            {useCase.whyItMatters}
+          </p>
+        </section>
+      )}
+
+      {attacker && attackerInfo && (
+        <section
+          className="border-b border-plaza-border bg-plaza-bad/10 px-4 py-3"
+          data-testid="attacker-panel"
+        >
+          <h3 className="mb-1 flex items-center gap-1 text-[10px] font-bold uppercase text-plaza-bad">
+            <span aria-hidden>☠</span> Attacker
+          </h3>
+          <p className="text-[12px] font-semibold text-plaza-bad">
+            {attackerInfo.label}
+          </p>
+          <p className="mt-1 text-[11px] leading-snug text-plaza-dim">
+            {attackerInfo.description}
+          </p>
+          <p className="mt-2 text-[10px] uppercase tracking-wide text-plaza-dim">
+            Type:{' '}
+            <span className="font-mono text-plaza-bad">
+              {attackerInfo.kind === 'malicious-agent'
+                ? 'malicious-agent'
+                : 'mitm-channel'}
+            </span>
+          </p>
+        </section>
+      )}
 
       {latest && (
         <div className="border-b border-plaza-border px-4 py-3">
