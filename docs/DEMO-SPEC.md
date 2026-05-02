@@ -29,12 +29,71 @@ shape. Summary:
 export interface DemoModule {
   manifest: DemoManifest;                                 // see §3
   agents: DemoAgent[];                                    // ≥ 2
+  useCase?: DemoUseCase;                                  // optional, see §2.1
+  attacker?: DemoAttacker;                                // optional, see §2.2
   createScenario(engine, opts): { runOnce(): Promise<...> };
   choreography?(scene): Promise<void>;                    // optional
+}
+
+export interface DemoAgent {
+  spec: AgentSpec;
+  spriteUrl: string;
+  home: GridPoint;
+  codeSnippet?: string;                                   // optional, see §2.3
 }
 ```
 
 Your `index.ts` MUST `export default` a `DemoModule`.
+
+### 2.1 `useCase` (optional but STRONGLY RECOMMENDED)
+
+Rendered in the right-hand panel above the live trace. Two short paragraphs:
+
+```ts
+{
+  scenario:     '1–3 sentences describing the real-world situation',
+  whyItMatters: '1–2 sentences explaining what would go wrong without DIDs',
+}
+```
+
+Keep it plain-language. Assume the reader has never heard of DIDs.
+
+### 2.2 `attacker` (optional, REQUIRED if your scenario reacts to attacker mode)
+
+Declares WHO the attacker is when the user toggles **Attacker mode ON**. Two flavours:
+
+```ts
+// Flavour A — one of your agents misbehaves
+{
+  kind: 'malicious-agent',
+  agentId: '<id from agents[]>',
+  label: 'Courier-Logistics-12 (rogue)',
+  description: '1–2 sentences explaining what they do',
+}
+
+// Flavour B — a man-in-the-middle on a channel between two honest agents
+{
+  kind: 'mitm-channel',
+  from: '<id of honest sender>',
+  to:   '<id of honest receiver>',
+  label: 'MITM on Store → Payment',
+  description: '...',
+}
+```
+
+The host uses this to:
+- Show a red panel "☠ Attacker" with the description.
+- Render a pulsing skull badge on the canvas (over the agent or at the channel midpoint).
+- Display the label in the HUD beside the toggle.
+
+If your scenario reacts to `opts.attackerMode()` you MUST declare this so users can see who is attacking.
+
+### 2.3 `codeSnippet` per agent (optional but RECOMMENDED)
+
+A short multi-line string shown in the hover tooltip BEFORE the agent has
+performed any action. Once it signs or verifies, the host overrides it with
+the actual call (real payload + truncated signature). Keep it ≤ 6 lines and
+use only `@agentdid/sdk` symbols you actually call.
 
 ## 3. The manifest — `manifest.json`
 
@@ -75,6 +134,9 @@ A demo MUST:
 8. Pass `npm run lint`, `npm test -- --run`, and `npm run build`.
 9. Be Apache-2.0 or MIT licensed. The PR description is your CLA-light: by
    merging you agree your contribution is offered under that license.
+10. Declare an `attacker` (§2.2) **if and only if** your scenario branches on
+    `opts.attackerMode()`. The HUD must always be able to tell the user who is
+    being simulated as malicious.
 
 ## 5. MUST NOT
 

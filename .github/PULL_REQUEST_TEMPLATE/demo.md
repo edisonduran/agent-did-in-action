@@ -28,6 +28,9 @@ I confirm that this demo:
 - [ ] Passes `npm run build` and the new chunk is ≤ 150 KB gz
 - [ ] Uses **only** `@agentdid/sdk` for cryptography (no direct noble/ethers)
 - [ ] Honours both `attackerMode: false` (no blocks) and `true` (≥1 block)
+- [ ] Declares `useCase` (`scenario` + `whyItMatters`) for the side panel
+- [ ] Declares `attacker` if the scenario branches on attacker mode (§2.2 of DEMO-SPEC)
+- [ ] Each agent has a `codeSnippet` so the hover tooltip is meaningful before the first interaction
 - [ ] Does not initialize its own telemetry, modals, or DOM overlays
 - [ ] Makes no outbound network requests
 - [ ] Is licensed Apache-2.0 or MIT (and `manifest.license` matches)
