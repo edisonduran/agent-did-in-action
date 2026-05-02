@@ -54,6 +54,14 @@ export function TraceInspector({
             <span className="font-semibold text-plaza-accent">Why it matters: </span>
             {useCase.whyItMatters}
           </p>
+          <p
+            className="mt-2 rounded border border-plaza-border/60 bg-plaza-bg/40 px-2 py-1 text-[10px] leading-snug text-plaza-dim"
+            data-testid="crypto-disclaimer"
+          >
+            <span className="font-semibold text-plaza-accent">No blockchain. </span>
+            Real Ed25519 keys are generated in this browser tab and never leave it.
+            Signatures are real; there is no on-chain registry, no RPC call, no gas.
+          </p>
         </section>
       )}
 
