@@ -15,8 +15,6 @@ interface SceneContainerProps {
   onBlocked?: (result: InteractionResult) => void;
 }
 
-const DEFAULT_SNIPPET = '// hover an agent to see the SDK call it just made';
-
 export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<PixiScene | null>(null);
@@ -86,10 +84,10 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
     setLastResult(null);
     setTooltip(null);
 
-    // Seed each agent's snippet with its declared default (or a generic placeholder).
+    // Seed each agent's snippet with its declared default.
     const seeded = new Map<string, string>();
     for (const a of demo.agents) {
-      seeded.set(a.spec.id, a.codeSnippet ?? DEFAULT_SNIPPET);
+      seeded.set(a.spec.id, a.codeSnippet);
     }
     lastCodeRef.current = seeded;
 
@@ -130,7 +128,7 @@ export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainer
           setTooltip({
             agentId: id,
             agentName: nameFor(id),
-            code: lastCodeRef.current.get(id) ?? DEFAULT_SNIPPET,
+            code: lastCodeRef.current.get(id) ?? '',
             x,
             y,
           });

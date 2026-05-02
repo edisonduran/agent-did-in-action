@@ -29,8 +29,8 @@ I confirm that this demo:
 - [ ] Uses **only** `@agentdid/sdk` for cryptography (no direct noble/ethers)
 - [ ] Honours both `attackerMode: false` (no blocks) and `true` (≥1 block)
 - [ ] Declares `useCase` (`scenario` + `whyItMatters`) for the side panel
+- [ ] Each agent declares a `codeSnippet` (default tooltip content)
 - [ ] Declares `attacker` if the scenario branches on attacker mode (§2.2 of DEMO-SPEC)
-- [ ] Each agent has a `codeSnippet` so the hover tooltip is meaningful before the first interaction
 - [ ] Does not initialize its own telemetry, modals, or DOM overlays
 - [ ] Makes no outbound network requests
 - [ ] Is licensed Apache-2.0 or MIT (and `manifest.license` matches)

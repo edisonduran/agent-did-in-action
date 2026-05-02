@@ -46,14 +46,14 @@ export interface DemoAgent {
   spriteUrl: string;
   home: GridPoint;
   /**
-   * Optional default SDK snippet shown in the hover tooltip BEFORE this agent
+   * Default SDK snippet shown in the hover tooltip BEFORE this agent
    * has performed any action. Once it signs / verifies, the host overrides
    * this with the actual call (with real payload + signature snippets).
    *
    * Multi-line strings are fine; rendered in a monospace tooltip.
    * Keep it short — ideally ≤ 6 lines.
    */
-  codeSnippet?: string;
+  codeSnippet: string;
 }
 
 /**
@@ -120,9 +120,10 @@ export type DemoAttacker =
 export interface DemoModule {
   manifest: DemoManifest;
   agents: DemoAgent[];
-  /** Optional narrative shown in the side panel. */
-  useCase?: DemoUseCase;
-  /** Optional attacker model surfaced when attackerMode is ON. */
+  /** Narrative shown in the side panel. Required. */
+  useCase: DemoUseCase;
+  /** Attacker model surfaced when attackerMode is ON.
+   *  REQUIRED if `createScenario` branches on `opts.attackerMode()`. */
   attacker?: DemoAttacker;
   /**
    * Build the scenario. Called once per host mount.

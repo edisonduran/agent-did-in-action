@@ -29,8 +29,8 @@ shape. Summary:
 export interface DemoModule {
   manifest: DemoManifest;                                 // see §3
   agents: DemoAgent[];                                    // ≥ 2
-  useCase?: DemoUseCase;                                  // optional, see §2.1
-  attacker?: DemoAttacker;                                // optional, see §2.2
+  useCase: DemoUseCase;                                   // required, see §2.1
+  attacker?: DemoAttacker;                                // see §2.2 (required iff scenario reacts to attackerMode)
   createScenario(engine, opts): { runOnce(): Promise<...> };
   choreography?(scene): Promise<void>;                    // optional
 }
@@ -39,13 +39,13 @@ export interface DemoAgent {
   spec: AgentSpec;
   spriteUrl: string;
   home: GridPoint;
-  codeSnippet?: string;                                   // optional, see §2.3
+  codeSnippet: string;                                    // required, see §2.3
 }
 ```
 
 Your `index.ts` MUST `export default` a `DemoModule`.
 
-### 2.1 `useCase` (optional but STRONGLY RECOMMENDED)
+### 2.1 `useCase` (REQUIRED)
 
 Rendered in the right-hand panel above the live trace. Two short paragraphs:
 
@@ -58,7 +58,7 @@ Rendered in the right-hand panel above the live trace. Two short paragraphs:
 
 Keep it plain-language. Assume the reader has never heard of DIDs.
 
-### 2.2 `attacker` (optional, REQUIRED if your scenario reacts to attacker mode)
+### 2.2 `attacker` (REQUIRED if your scenario reacts to attacker mode)
 
 Declares WHO the attacker is when the user toggles **Attacker mode ON**. Two flavours:
 
@@ -88,12 +88,13 @@ The host uses this to:
 
 If your scenario reacts to `opts.attackerMode()` you MUST declare this so users can see who is attacking.
 
-### 2.3 `codeSnippet` per agent (optional but RECOMMENDED)
+### 2.3 `codeSnippet` per agent (REQUIRED)
 
 A short multi-line string shown in the hover tooltip BEFORE the agent has
 performed any action. Once it signs or verifies, the host overrides it with
 the actual call (real payload + truncated signature). Keep it ≤ 6 lines and
-use only `@agentdid/sdk` symbols you actually call.
+use only `@agentdid/sdk` symbols you actually call. Every agent in `agents[]`
+must declare one — the hover tooltip is part of the demo's pedagogical contract.
 
 ## 3. The manifest — `manifest.json`
 
@@ -134,7 +135,10 @@ A demo MUST:
 8. Pass `npm run lint`, `npm test -- --run`, and `npm run build`.
 9. Be Apache-2.0 or MIT licensed. The PR description is your CLA-light: by
    merging you agree your contribution is offered under that license.
-10. Declare an `attacker` (§2.2) **if and only if** your scenario branches on
+10. Declare a `useCase` (§2.1) and a `codeSnippet` per agent (§2.3). These are
+    not cosmetic — the side panel and hover tooltip are part of the demo's
+    pedagogical contract.
+11. Declare an `attacker` (§2.2) **if and only if** your scenario branches on
     `opts.attackerMode()`. The HUD must always be able to tell the user who is
     being simulated as malicious.
 
