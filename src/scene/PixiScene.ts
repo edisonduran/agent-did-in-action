@@ -1,10 +1,15 @@
 /**
  * PixiScene — owns the PixiJS Application, the isometric tile floor,
- * the agent sprite layer, and the resize logic.
+ * the agent sprite layer, and the FX layer (connection lines + badges).
  *
- * This is a Day 2 deliverable: it can stand up a canvas, draw a
- * tile grid, load and place 3 sprites at fixed grid positions.
- * Day 3 will wire it to the SimulationEngine event bus.
+ * In Day 3 it grows two new responsibilities:
+ *   - `moveAgent(id, target, durationMs)` smoothly animates a sprite
+ *     between grid tiles (lerp on the ticker).
+ *   - `flashLink(fromId, toId, kind)` draws a momentary line between
+ *     two agents in green (verified) or red (blocked), plus a badge.
+ *
+ * The renderer is intentionally dumb: scenarios call these methods
+ * via the SimulationEngine's event bus.
  */
 
 import {
@@ -15,6 +20,7 @@ import {
   Sprite,
   Text,
   TextStyle,
+  Ticker,
 } from 'pixi.js';
 import { gridToScreen, type GridPoint, type IsoConfig } from './isometric';
 
@@ -25,22 +31,34 @@ export interface PlacedAgent {
   label: string;
 }
 
-const GRID_SIZE = 8; // 8x8 tiles
-const TILE_WIDTH = 96; // px
+const GRID_SIZE = 8;
+const TILE_WIDTH = 96;
 const TILE_COLOR_A = 0x1f2a37;
 const TILE_COLOR_B = 0x141c25;
+
+interface AgentNode {
+  sprite: Sprite;
+  label: Text;
+  current: GridPoint;
+  target: GridPoint;
+  travel: { startMs: number; durationMs: number; from: GridPoint } | null;
+}
 
 export class PixiScene {
   private app: Application;
   private root = new Container();
   private floor = new Container();
+  private fxLayer = new Container();
   private agentLayer = new Container();
+  private agents = new Map<string, AgentNode>();
   private isoConfig: IsoConfig = {
     tileWidth: TILE_WIDTH,
     originX: 0,
     originY: 0,
   };
   private resizeHandler: () => void;
+  private elapsedMs = 0;
+  private tickHandler = (ticker: Ticker) => this.onTick(ticker);
 
   constructor(private parent: HTMLElement) {
     this.app = new Application();
@@ -58,26 +76,28 @@ export class PixiScene {
     this.parent.appendChild(this.app.canvas);
     this.app.stage.addChild(this.root);
     this.root.addChild(this.floor);
+    this.root.addChild(this.fxLayer);
     this.root.addChild(this.agentLayer);
 
     this.handleResize();
     window.addEventListener('resize', this.resizeHandler);
     this.drawFloor();
+    this.app.ticker.add(this.tickHandler);
   }
 
   destroy(): void {
     window.removeEventListener('resize', this.resizeHandler);
+    this.app.ticker.remove(this.tickHandler);
     this.app.destroy(true, { children: true });
   }
 
   async placeAgents(agents: PlacedAgent[]): Promise<void> {
     this.agentLayer.removeChildren();
+    this.agents.clear();
     for (const agent of agents) {
       const texture = await Assets.load(agent.spriteUrl);
       const sprite = new Sprite(texture);
       sprite.anchor.set(0.5, 1);
-      const pos = gridToScreen(agent.position, this.isoConfig);
-      sprite.position.set(pos.x, pos.y);
       this.agentLayer.addChild(sprite);
 
       const label = new Text({
@@ -90,14 +110,113 @@ export class PixiScene {
         }),
       });
       label.anchor.set(0.5, 0);
-      label.position.set(pos.x, pos.y + 4);
       this.agentLayer.addChild(label);
+
+      const node: AgentNode = {
+        sprite,
+        label,
+        current: { ...agent.position },
+        target: { ...agent.position },
+        travel: null,
+      };
+      this.agents.set(agent.id, node);
+      this.applyNodePosition(node);
     }
     this.depthSort();
   }
 
+  /** Animate an agent from its current cell to a new cell. */
+  moveAgent(id: string, target: GridPoint, durationMs = 1200): void {
+    const node = this.agents.get(id);
+    if (!node) return;
+    node.travel = {
+      startMs: this.elapsedMs,
+      durationMs,
+      from: { ...node.current },
+    };
+    node.target = { ...target };
+  }
+
+  /** Flash a colored line + badge between two agents for ~1.2s. */
+  flashLink(fromId: string, toId: string, kind: 'verify' | 'block' | 'sign'): void {
+    const a = this.agents.get(fromId);
+    const b = this.agents.get(toId);
+    if (!a || !b) return;
+    const aPos = gridToScreen(a.current, this.isoConfig);
+    const bPos = gridToScreen(b.current, this.isoConfig);
+
+    const color = kind === 'verify' ? 0x22c55e : kind === 'block' ? 0xef4444 : 0x22d3ee;
+    const fx = new Container();
+    const line = new Graphics()
+      .moveTo(aPos.x, aPos.y - 32)
+      .lineTo(bPos.x, bPos.y - 32)
+      .stroke({ color, width: 3, alpha: 0.9 });
+    fx.addChild(line);
+
+    const midX = (aPos.x + bPos.x) / 2;
+    const midY = (aPos.y + bPos.y) / 2 - 40;
+    const badge = new Graphics().circle(midX, midY, 14).fill(color);
+    fx.addChild(badge);
+    const badgeText = new Text({
+      text: kind === 'verify' ? '\u2713' : kind === 'block' ? '\u2717' : '\u270D',
+      style: new TextStyle({
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: 18,
+        fill: 0x0b0f14,
+        fontWeight: 'bold',
+      }),
+    });
+    badgeText.anchor.set(0.5);
+    badgeText.position.set(midX, midY);
+    fx.addChild(badgeText);
+
+    this.fxLayer.addChild(fx);
+    const startMs = this.elapsedMs;
+    const lifetime = 1300;
+    const fadeFn = (ticker: Ticker) => {
+      const age = this.elapsedMs - startMs;
+      const t = age / lifetime;
+      if (t >= 1) {
+        this.fxLayer.removeChild(fx);
+        fx.destroy({ children: true });
+        this.app.ticker.remove(fadeFn);
+        return;
+      }
+      fx.alpha = 1 - t;
+      void ticker;
+    };
+    this.app.ticker.add(fadeFn);
+  }
+
+  private onTick(ticker: Ticker): void {
+    this.elapsedMs += ticker.deltaMS;
+    let dirty = false;
+    for (const node of this.agents.values()) {
+      if (!node.travel) continue;
+      const age = this.elapsedMs - node.travel.startMs;
+      const t = Math.min(1, age / node.travel.durationMs);
+      const eased = easeInOut(t);
+      node.current = {
+        gx: node.travel.from.gx + (node.target.gx - node.travel.from.gx) * eased,
+        gy: node.travel.from.gy + (node.target.gy - node.travel.from.gy) * eased,
+      };
+      this.applyNodePosition(node);
+      dirty = true;
+      if (t >= 1) {
+        node.current = { ...node.target };
+        node.travel = null;
+      }
+    }
+    if (dirty) this.depthSort();
+  }
+
+  private applyNodePosition(node: AgentNode): void {
+    const screen = gridToScreen(node.current, this.isoConfig);
+    node.sprite.position.set(screen.x, screen.y);
+    node.label.position.set(screen.x, screen.y + 4);
+  }
+
   private depthSort(): void {
-    // Painter's algorithm: bigger y renders on top
     this.agentLayer.children.sort((a, b) => a.y - b.y);
   }
 
@@ -110,6 +229,8 @@ export class PixiScene {
       originY: h / 2 - (GRID_SIZE * TILE_WIDTH) / 8,
     };
     this.drawFloor();
+    for (const node of this.agents.values()) this.applyNodePosition(node);
+    this.depthSort();
   }
 
   private drawFloor(): void {
@@ -131,4 +252,8 @@ export class PixiScene {
     }
     this.floor.addChild(g);
   }
+}
+
+function easeInOut(t: number): number {
+  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 }
