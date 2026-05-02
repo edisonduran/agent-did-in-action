@@ -1,0 +1,13 @@
+{
+  "id": "supply-chain",
+  "spec_version": "1",
+  "title": "Cold-chain Supply Bots",
+  "tagline": "A factory, a courier, and a receiver swap signed shipment manifests — and catch a courier that lies.",
+  "author": { "name": "Agent-DID core team", "github": "edisonduran" },
+  "license": "Apache-2.0",
+  "sdk_version": "^0.2.0",
+  "tags": ["logistics", "supply-chain", "official-baseline"],
+  "official": true,
+  "accent_color": "#a855f7",
+  "problem": "Multi-hop logistics: how do we trust the courier didn't tamper with the manifest before delivery?"
+}

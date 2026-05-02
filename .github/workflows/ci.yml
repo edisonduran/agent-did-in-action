@@ -27,6 +27,9 @@ jobs:
       - name: Typecheck
         run: npm run lint
 
+      - name: Validate community demo manifests
+        run: npm run validate:demos
+
       - name: Unit tests
         run: npm test -- --run
 

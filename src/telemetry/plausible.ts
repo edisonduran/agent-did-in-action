@@ -22,7 +22,10 @@ export type PlazaEventName =
   | 'cta.star.clicked'
   | 'cta.share.clicked'
   | 'demo.viewsource.clicked'
-  | 'demo.scenario.changed';
+  | 'demo.scenario.changed'
+  | 'gallery.viewed'
+  | 'gallery.demo.picked'
+  | 'gallery.returned';
 
 declare global {
   interface Window {

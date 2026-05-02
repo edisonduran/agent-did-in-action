@@ -5,6 +5,8 @@ interface HudProps {
   onReopenLastBlock?: () => void;
   muted: boolean;
   onToggleMute: () => void;
+  demoTitle?: string;
+  onBackToGallery?: () => void;
 }
 
 export function Hud({
@@ -14,9 +16,29 @@ export function Hud({
   onReopenLastBlock,
   muted,
   onToggleMute,
+  demoTitle,
+  onBackToGallery,
 }: HudProps) {
   return (
     <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-2">
+      {(demoTitle || onBackToGallery) && (
+        <div className="pointer-events-auto rounded border border-plaza-border bg-plaza-panel/95 px-3 py-2 backdrop-blur">
+          {onBackToGallery && (
+            <button
+              type="button"
+              onClick={onBackToGallery}
+              className="text-[11px] text-plaza-dim hover:text-plaza-accent"
+            >
+              ← Gallery
+            </button>
+          )}
+          {demoTitle && (
+            <p className="mt-0.5 text-xs font-semibold text-plaza-text">
+              {demoTitle}
+            </p>
+          )}
+        </div>
+      )}
       <div className="pointer-events-auto rounded border border-plaza-border bg-plaza-panel/95 px-3 py-2 backdrop-blur">
         <label className="flex cursor-pointer items-center gap-2 text-xs">
           <input
@@ -35,7 +57,7 @@ export function Hud({
         </label>
         <p className="mt-1 max-w-[260px] text-[11px] text-plaza-dim">
           {attackerMode
-            ? 'The Store→Payment signature gets corrupted in flight. Watch the SDK reject the handoff.'
+            ? 'A handoff signature gets tampered with in flight. Watch the SDK reject it.'
             : 'All handoffs use real Ed25519 signatures verified by @agentdid/sdk.'}
         </p>
         {blockedCount > 0 && (
@@ -67,7 +89,7 @@ export function Hud({
       </div>
 
       <div className="pointer-events-none rounded border border-plaza-border bg-plaza-panel/80 px-3 py-2 text-[11px] text-plaza-dim backdrop-blur">
-        <span className="font-mono text-plaza-accent">Day 6</span> · polish · glow + sound
+        <span className="font-mono text-plaza-accent">Day 7</span> · gallery · community demos
       </div>
     </div>
   );

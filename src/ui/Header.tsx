@@ -10,20 +10,25 @@ function handleShare(url: string) {
   window.open(tweet, '_blank', 'noopener,noreferrer');
 }
 
-export function Header() {
+export function Header({ onLogoClick }: { onLogoClick?: () => void } = {}) {
   return (
     <header className="flex items-center justify-between border-b border-plaza-border bg-plaza-panel px-4 py-3">
-      <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={onLogoClick}
+        disabled={!onLogoClick}
+        className="flex items-center gap-3 text-left disabled:cursor-default"
+      >
         <div className="flex h-8 w-8 items-center justify-center rounded bg-plaza-accent font-mono text-sm font-bold text-plaza-bg">
           DID
         </div>
         <div>
           <div className="font-semibold text-plaza-accent">Agent-DID Plaza</div>
           <div className="text-xs text-plaza-dim">
-            Watch AI agents prove who they are
+            {onLogoClick ? 'Back to gallery' : 'Watch AI agents prove who they are'}
           </div>
         </div>
-      </div>
+      </button>
       <nav className="flex items-center gap-2 text-sm">
         <a
           href="https://github.com/edisonduran/agent-did/blob/main/docs/RFC-001-Agent-DID-Specification.md"

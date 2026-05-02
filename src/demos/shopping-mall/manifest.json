@@ -1,0 +1,13 @@
+{
+  "id": "shopping-mall",
+  "spec_version": "1",
+  "title": "The Plaza Shopping Mall",
+  "tagline": "A shopper, a store, and a payment bot exchange signed handoffs in real time.",
+  "author": { "name": "Agent-DID core team", "github": "edisonduran" },
+  "license": "Apache-2.0",
+  "sdk_version": "^0.2.0",
+  "tags": ["retail", "payments", "official-baseline"],
+  "official": true,
+  "accent_color": "#22d3ee",
+  "problem": "Multi-agent commerce: how do we know the bot taking your money is actually the one the store hired?"
+}

@@ -5,7 +5,18 @@
  * can be unit-tested in pure Node.
  */
 
-export type AgentRole = 'shopper' | 'store' | 'payment-bot' | 'impostor';
+export type AgentRole =
+  | 'shopper'
+  | 'store'
+  | 'payment-bot'
+  | 'impostor'
+  // Roles introduced by additional demos. Adding a new role does not
+  // require host changes — keep the union open to whatever the gallery
+  // contributes.
+  | 'factory'
+  | 'courier'
+  | 'receiver'
+  | (string & {});
 
 export interface AgentSpec {
   /** Stable id used inside the simulation (not the DID). */

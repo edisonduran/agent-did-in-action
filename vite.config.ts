@@ -28,6 +28,12 @@ export default defineConfig({
             }
             if (id.includes('react') || id.includes('scheduler')) return 'react-vendor';
           }
+          // Each demo gets its own chunk so the registry is the only thing
+          // the gallery pays for up front.
+          const demoMatch = id.match(/[\\/]src[\\/]demos[\\/]([^\\/]+)[\\/]/);
+          if (demoMatch && demoMatch[1] !== '_registry.ts' && !demoMatch[1].startsWith('_')) {
+            return `demo-${demoMatch[1]}`;
+          }
           return undefined;
         }
       }

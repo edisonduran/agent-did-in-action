@@ -1,57 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { PixiScene, type PlacedAgent } from './PixiScene';
 import { SimulationEngine } from '../sim/SimulationEngine';
-import { createShoppingMallScenario } from '../sim/scenarios/shoppingMall';
-import type { AgentSpec, InteractionResult } from '../sim/types';
+import type { InteractionResult } from '../sim/types';
 import type { SimEvent } from '../sim/events';
+import type { DemoModule, DemoSceneApi } from '../demos/types';
 import { TraceInspector, type TraceEntry } from '../ui/TraceInspector';
 import { playCue } from '../sound/cues';
 
-const SPECS: Record<string, AgentSpec> = {
-  shopper: {
-    id: 'shopper',
-    role: 'shopper',
-    name: 'Shopper-001',
-    description: 'A shopping agent acting on behalf of a human',
-    systemPrompt: 'You shop on behalf of your human principal',
-    capabilities: ['cart.add', 'payment.authorize'],
-  },
-  store: {
-    id: 'store',
-    role: 'store',
-    name: 'Store-Clothing-77',
-    description: 'A clothing store agent in the Plaza',
-    systemPrompt: 'You sell clothes and process payments',
-    capabilities: ['inventory.read', 'price.quote', 'payment.charge'],
-  },
-  payment: {
-    id: 'payment',
-    role: 'payment-bot',
-    name: 'Payment-Bot',
-    description: 'A payment processor agent',
-    systemPrompt: 'You verify and process charges',
-    capabilities: ['payment.verify', 'payment.process'],
-  },
-};
-
-const SPRITE_URL: Record<string, string> = {
-  shopper: '/sprites/agent-shopper.svg',
-  store: '/sprites/agent-store.svg',
-  payment: '/sprites/agent-payment.svg',
-};
-
-const HOME = {
-  shopper: { gx: 1, gy: 1 },
-  store: { gx: 5, gy: 2 },
-  payment: { gx: 3, gy: 5 },
-};
-
 interface SceneContainerProps {
+  demo: DemoModule;
   attackerMode: boolean;
   onBlocked?: (result: InteractionResult) => void;
 }
 
-export function SceneContainer({ attackerMode, onBlocked }: SceneContainerProps) {
+export function SceneContainer({ demo, attackerMode, onBlocked }: SceneContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<PixiScene | null>(null);
   const engineRef = useRef<SimulationEngine | null>(null);
@@ -69,38 +31,43 @@ export function SceneContainer({ attackerMode, onBlocked }: SceneContainerProps)
     onBlockedRef.current = onBlocked;
   }, [onBlocked]);
 
+  // Re-mount the engine + scene whenever the user picks a different demo.
   useEffect(() => {
     if (!containerRef.current) return;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
+
+    setReady(false);
+    setTraces([]);
+    setLastResult(null);
 
     const scene = new PixiScene(containerRef.current);
     sceneRef.current = scene;
     const engine = new SimulationEngine();
     engineRef.current = engine;
 
+    const sceneApi: DemoSceneApi = {
+      moveAgent: (id, to, ms) => scene.moveAgent(id, to, ms),
+      wait: (ms) => new Promise((res) => setTimeout(res, ms)),
+    };
+
     (async () => {
       await scene.init();
       if (cancelled) return;
 
-      // Create real DIDs
-      await Promise.all([
-        engine.addAgent(SPECS.shopper),
-        engine.addAgent(SPECS.store),
-        engine.addAgent(SPECS.payment),
-      ]);
+      // Create real DIDs for every agent declared by the demo.
+      await Promise.all(demo.agents.map((a) => engine.addAgent(a.spec)));
       if (cancelled) return;
 
-      const placed: PlacedAgent[] = ['shopper', 'store', 'payment'].map((id) => ({
-        id,
-        spriteUrl: SPRITE_URL[id],
-        position: HOME[id as keyof typeof HOME],
-        label: SPECS[id].name,
+      const placed: PlacedAgent[] = demo.agents.map((a) => ({
+        id: a.spec.id,
+        spriteUrl: a.spriteUrl,
+        position: a.home,
+        label: a.spec.name,
       }));
       await scene.placeAgents(placed);
       if (cancelled) return;
 
-      // Subscribe renderer to engine events
       engine.bus.onAny((evt: SimEvent) => {
         if (evt.type === 'interaction.signed') {
           const r = evt.result;
@@ -147,24 +114,25 @@ export function SceneContainer({ attackerMode, onBlocked }: SceneContainerProps)
         }
       });
 
-      const scenario = createShoppingMallScenario(engine, {
+      const scenario = demo.createScenario(engine, {
         attackerMode: () => attackerRef.current,
       });
       setReady(true);
 
-      // Loop: walk -> sign+verify -> walk back -> repeat
       const loop = async () => {
         if (cancelled) return;
-        // Shopper walks halfway to store
-        scene.moveAgent('shopper', { gx: 3, gy: 1.5 }, 1200);
-        await wait(1300);
-        if (cancelled) return;
+        if (demo.choreography) {
+          await demo.choreography(sceneApi);
+          if (cancelled) return;
+        }
         await scenario.runOnce();
         if (cancelled) return;
-        await wait(1500);
+        await sceneApi.wait(1500);
         if (cancelled) return;
-        scene.moveAgent('shopper', HOME.shopper, 1200);
-        await wait(1500);
+        for (const a of demo.agents) {
+          scene.moveAgent(a.spec.id, a.home, 1000);
+        }
+        await sceneApi.wait(1100);
         timer = setTimeout(loop, 800);
       };
       void loop();
@@ -178,7 +146,7 @@ export function SceneContainer({ attackerMode, onBlocked }: SceneContainerProps)
       sceneRef.current = null;
       engineRef.current = null;
     };
-  }, []);
+  }, [demo]);
 
   return (
     <div className="relative h-full w-full">
@@ -206,8 +174,4 @@ function appendTrace(
   entry: TraceEntry,
 ): void {
   setter((prev) => [entry, ...prev].slice(0, 20));
-}
-
-function wait(ms: number): Promise<void> {
-  return new Promise((res) => setTimeout(res, ms));
 }

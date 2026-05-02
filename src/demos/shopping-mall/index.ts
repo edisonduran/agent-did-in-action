@@ -1,0 +1,155 @@
+import { AgentRuntime } from '../../sim/AgentRuntime';
+import type { SimulationEngine } from '../../sim/SimulationEngine';
+import type { InteractionPayload, InteractionResult } from '../../sim/types';
+import type {
+  DemoAgent,
+  DemoModule,
+  DemoSceneApi,
+  DemoScenarioOpts,
+} from '../types';
+import manifest from './manifest.json';
+
+const AGENTS: DemoAgent[] = [
+  {
+    spec: {
+      id: 'shopper',
+      role: 'shopper',
+      name: 'Shopper-001',
+      description: 'A shopping agent acting on behalf of a human',
+      systemPrompt: 'You shop on behalf of your human principal',
+      capabilities: ['cart.add', 'payment.authorize'],
+    },
+    spriteUrl: '/sprites/agent-shopper.svg',
+    home: { gx: 1, gy: 1 },
+  },
+  {
+    spec: {
+      id: 'store',
+      role: 'store',
+      name: 'Store-Clothing-77',
+      description: 'A clothing store agent in the Plaza',
+      systemPrompt: 'You sell clothes and process payments',
+      capabilities: ['inventory.read', 'price.quote', 'payment.charge'],
+    },
+    spriteUrl: '/sprites/agent-store.svg',
+    home: { gx: 5, gy: 2 },
+  },
+  {
+    spec: {
+      id: 'payment',
+      role: 'payment-bot',
+      name: 'Payment-Bot',
+      description: 'A payment processor agent',
+      systemPrompt: 'You verify and process charges',
+      capabilities: ['payment.verify', 'payment.process'],
+    },
+    spriteUrl: '/sprites/agent-payment.svg',
+    home: { gx: 3, gy: 5 },
+  },
+];
+
+function nonce(): string {
+  return Math.random().toString(36).slice(2, 12);
+}
+
+function flipFirstByte(hex: string): string {
+  const first = parseInt(hex.slice(0, 2), 16);
+  const flipped = ((first ^ 0xff) & 0xff).toString(16).padStart(2, '0');
+  return flipped + hex.slice(2);
+}
+
+function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
+  return {
+    async runOnce(): Promise<InteractionResult[]> {
+      const shopper = engine.getAgent('shopper');
+      const store = engine.getAgent('store');
+      const payment = engine.getAgent('payment');
+      if (!shopper || !store || !payment) {
+        throw new Error('shopping-mall demo requires shopper, store, payment agents');
+      }
+      const results: InteractionResult[] = [];
+
+      // ---- Step A: shopper greets store ----
+      const greeting: InteractionPayload = {
+        from: shopper.did,
+        to: store.did,
+        action: 'greet',
+        nonce: nonce(),
+      };
+      engine.bus.emit({
+        type: 'interaction.started',
+        from: shopper.spec.id,
+        to: store.spec.id,
+        payload: greeting,
+      });
+      const greetSigned = await shopper.sign(greeting);
+      const greetResult: InteractionResult = {
+        payload: greetSigned.payload,
+        signature: greetSigned.signature,
+        signerDid: greetSigned.signerDid,
+        verified: false,
+      };
+      engine.bus.emit({ type: 'interaction.signed', result: greetResult });
+      greetResult.verified = await AgentRuntime.verify(greetSigned);
+      engine.bus.emit({
+        type: greetResult.verified ? 'interaction.verified' : 'interaction.blocked',
+        result: greetResult,
+      });
+      results.push(greetResult);
+
+      // ---- Step B: store hands charge to payment ----
+      const charge: InteractionPayload = {
+        from: store.did,
+        to: payment.did,
+        action: 'charge',
+        amount: 42,
+        nonce: nonce(),
+      };
+      engine.bus.emit({
+        type: 'interaction.started',
+        from: store.spec.id,
+        to: payment.spec.id,
+        payload: charge,
+      });
+      const chargeSigned = await store.sign(charge);
+      const tampered = opts.attackerMode();
+      const transmittedSig = tampered
+        ? flipFirstByte(chargeSigned.signature)
+        : chargeSigned.signature;
+      const chargeResult: InteractionResult = {
+        payload: chargeSigned.payload,
+        signature: transmittedSig,
+        signerDid: chargeSigned.signerDid,
+        verified: false,
+      };
+      engine.bus.emit({ type: 'interaction.signed', result: chargeResult });
+      chargeResult.verified = await AgentRuntime.verifyClaim(
+        chargeSigned.signerDid,
+        charge,
+        transmittedSig,
+      );
+      if (!chargeResult.verified) chargeResult.blockedReason = 'tampered-signature';
+      engine.bus.emit({
+        type: chargeResult.verified ? 'interaction.verified' : 'interaction.blocked',
+        result: chargeResult,
+      });
+      results.push(chargeResult);
+
+      return results;
+    },
+  };
+}
+
+async function choreography(scene: DemoSceneApi): Promise<void> {
+  scene.moveAgent('shopper', { gx: 3, gy: 1.5 }, 1200);
+  await scene.wait(1300);
+}
+
+const demo: DemoModule = {
+  manifest: manifest as DemoModule['manifest'],
+  agents: AGENTS,
+  createScenario,
+  choreography,
+};
+
+export default demo;
