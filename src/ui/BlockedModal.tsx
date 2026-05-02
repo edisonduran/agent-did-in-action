@@ -10,6 +10,7 @@
  */
 
 import type { InteractionResult } from '../sim/types';
+import { track } from '../telemetry/plausible';
 
 interface BlockedModalProps {
   result: InteractionResult;
@@ -78,6 +79,7 @@ export function BlockedModal({
             href={specUrl}
             target="_blank"
             rel="noreferrer noopener"
+            onClick={() => track('cta.spec.clicked', { source: 'blocked-modal' })}
             className="flex-1 rounded border border-plaza-border bg-plaza-bg px-3 py-2 text-center text-xs font-semibold text-plaza-accent hover:border-plaza-accent"
           >
             Read the spec →
@@ -86,6 +88,7 @@ export function BlockedModal({
             href={maintainerUrl}
             target="_blank"
             rel="noreferrer noopener"
+            onClick={() => track('cta.maintainer.clicked', { source: 'blocked-modal' })}
             className="flex-1 rounded bg-plaza-accent px-3 py-2 text-center text-xs font-semibold text-plaza-bg hover:bg-cyan-300"
           >
             Talk to maintainer →

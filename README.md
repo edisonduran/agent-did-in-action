@@ -1,27 +1,44 @@
-# Agent-DID in Action
+# Agent-DID in Action — the Plaza demo
 
-> **Watch AI agents prove who they are.** Interactive browser demo of the [Agent-DID](https://github.com/edisonduran/agent-did) standard.
+> **Watch AI agents prove who they are.** Live, browser-only demo of [`@agentdid/sdk`](https://www.npmjs.com/package/@agentdid/sdk) — the reference implementation of [Agent-DID](https://github.com/edisonduran/agent-did).
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Built on @agentdid/sdk](https://img.shields.io/badge/built%20on-%40agentdid%2Fsdk%200.2.0-success)](https://www.npmjs.com/package/@agentdid/sdk)
+[![CI](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml/badge.svg)](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml)
 
-This is the official live demo for the [Agent-DID Public Review](https://github.com/edisonduran/agent-did) — a public, browser-only playground where you can watch AI agents identify themselves cryptographically before transacting, and watch impostors get blocked in real time.
-
-> ⚠️ **Status: Day 0 Spike.** Right now this repo only contains the viability spike that proves `@agentdid/sdk@0.2.0` runs cleanly in a browser bundle. The full interactive scene (Shopping Mall scenario, attacker mode, trace inspector) is being built next. Follow the [main repo](https://github.com/edisonduran/agent-did) for launch updates.
+![Agent-DID Plaza preview](public/og-image.svg)
 
 ---
 
-## What this demo proves
+## What you see
 
-- ✅ The Agent-DID SDK can be installed from npm and run **entirely in a browser** — no backend, no mocks.
-- ✅ Two independent agents can each generate their own DID, sign messages, and verify each other's signatures.
-- ✅ When an impostor tampers with a signature, the verifier rejects it. **The handoff is blocked.**
+Three agents share an isometric plaza:
 
-Every cryptographic operation you see in the demo is the **real `@agentdid/sdk` package** that any developer can install today:
+- 🛒 **Shopper-001** — acts on behalf of a human
+- 🏬 **Store-Clothing-77** — sells things, charges money
+- 💳 **Payment-Bot** — settles payments
+
+Every ~5 seconds the demo runs one full handoff cycle:
+
+1. Shopper walks halfway to the Store and **signs** a `greeting` with its real Ed25519 key (cyan ✍ badge).
+2. Store **verifies** the signature with `@agentdid/sdk` (green ✓ badge).
+3. Store **signs** a `payment.charge $42` toward Payment-Bot.
+4. Payment-Bot **verifies** the signature.
+5. Shopper walks back. Loop repeats.
+
+Toggle **Attacker mode** in the top-left and one byte of the Store→Payment signature gets flipped in flight. The SDK rejects the handoff (red ✗ badge), the receiving agent shakes red, and a modal pops up showing the real `VerificationBlockedError` reason. Nothing about this is mocked — it is the published npm package running in your browser.
+
+---
+
+## Why it matters
+
+Agent-to-agent commerce only works if the receiving side can prove who is calling, with no central server in the loop. The Plaza shows that proof happening live, in code you can install today:
 
 ```bash
 npm install @agentdid/sdk
 ```
+
+Read the spec: [RFC-001 Agent-DID Specification](https://github.com/edisonduran/agent-did/blob/main/docs/RFC-001-Agent-DID-Specification.md).
 
 ---
 
@@ -33,17 +50,42 @@ Requires Node 20+.
 git clone https://github.com/edisonduran/agent-did-in-action.git
 cd agent-did-in-action
 npm install
-npm run dev
+npm run dev      # http://localhost:5173
 ```
 
-Open <http://localhost:5173>.
-
-To produce a static build:
+Production build + static preview:
 
 ```bash
 npm run build
-npm run preview
+npm run preview  # http://localhost:4173
 ```
+
+Tests, smoke and lint:
+
+```bash
+npm run lint     # tsc --noEmit
+npm test         # vitest
+npm run smoke    # node-side SDK smoke
+```
+
+End-to-end (requires `npx playwright install chromium`):
+
+```bash
+npm run test:e2e
+```
+
+---
+
+## Telemetry
+
+Production builds opt into [Plausible](https://plausible.io) when both env vars are set at build time:
+
+```bash
+VITE_PLAUSIBLE_DOMAIN=plaza.agent-did.dev
+VITE_PLAUSIBLE_SCRIPT=https://plausible.io/js/script.js   # optional override
+```
+
+Without them, every event is routed to `console.debug` so you can validate the funnel locally. The 11 events instrumented are listed in [`src/telemetry/plausible.ts`](src/telemetry/plausible.ts) and mirror `_bmad-output/planning-artifacts/demo-launch-plan.md §3.2`.
 
 ---
 
@@ -52,9 +94,11 @@ npm run preview
 | Layer | Choice | Why |
 |---|---|---|
 | Bundler / dev server | [Vite](https://vitejs.dev) 5 | Fast HMR, clean static build |
-| UI | React 18 + TypeScript | Familiar, type-safe |
+| UI | React 18 + TypeScript 5 | Familiar, type-safe |
+| Scene | [PixiJS](https://pixijs.com) 8 | WebGL isometric tiles + sprites |
 | SDK | [`@agentdid/sdk`](https://www.npmjs.com/package/@agentdid/sdk) 0.2.0 | The real published package — no mocks |
-| Hosting | Static (Vercel-friendly) | Zero backend, zero ops cost |
+| Tests | Vitest + Playwright | Unit + cross-browser smoke |
+| Hosting | Static (Vercel) | Zero backend |
 
 ---
 
@@ -62,15 +106,20 @@ npm run preview
 
 ```
 agent-did-in-action/
-├── index.html
+├── public/                 ← favicon, OG image, sprites
 ├── src/
-│   ├── main.tsx        ← React entrypoint
-│   └── App.tsx         ← Day 0 spike (current state)
-├── vite.config.ts
-└── README.md
+│   ├── App.tsx             ← top-level state (attacker mode, blocked modal)
+│   ├── main.tsx            ← React + telemetry bootstrap
+│   ├── scene/              ← PixiJS scene + isometric grid
+│   ├── sim/                ← engine, runtime, scenarios (pure TS, unit-tested)
+│   ├── telemetry/          ← Plausible wrapper
+│   └── ui/                 ← Header / Hud / TraceInspector / BlockedModal
+├── tests/                  ← vitest unit + ui tests
+├── tests-e2e/              ← Playwright cross-browser smoke
+├── scripts/smoke.mjs       ← node-side SDK validation
+├── vercel.json             ← deploy config + caching headers
+└── .github/workflows/ci.yml
 ```
-
-The full demo (Shopping Mall scenario, PixiJS scene, attacker toggle, trace inspector) will be built incrementally on top of this scaffold across the following days.
 
 ---
 

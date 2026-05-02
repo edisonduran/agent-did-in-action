@@ -4,6 +4,7 @@ import { Hud } from './ui/Hud';
 import { BlockedModal } from './ui/BlockedModal';
 import { SceneContainer } from './scene/SceneContainer';
 import type { InteractionResult } from './sim/types';
+import { track, trackFirstInteraction } from './telemetry/plausible';
 
 export default function App() {
   const [attackerMode, setAttackerMode] = useState(false);
@@ -19,6 +20,10 @@ export default function App() {
       if (!autoOpenedFor) {
         setModalOpen(true);
         setAutoOpenedFor(true);
+        track('demo.attacker.blocked.viewed', {
+          reason: result.blockedReason ?? 'unknown',
+          action: result.payload.action,
+        });
       }
     },
     [autoOpenedFor],
@@ -27,6 +32,8 @@ export default function App() {
   const handleToggleAttacker = useCallback((next: boolean) => {
     setAttackerMode(next);
     if (!next) setAutoOpenedFor(false);
+    trackFirstInteraction();
+    track('demo.attacker.toggled', { state: next ? 'on' : 'off' });
   }, []);
 
   return (
