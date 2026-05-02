@@ -33,6 +33,15 @@ function writeDemoIdToUrl(id: string | null): void {
   window.history.pushState({}, '', url.toString());
 }
 
+function buildDemoContext(demo: DemoModule): string {
+  const scope = demo.manifest.official ? 'official demo' : 'community demo';
+  const tags = demo.manifest.tags
+    .filter((tag) => tag !== 'official-baseline' && tag !== 'advanced-official')
+    .slice(0, 2)
+    .map((tag) => tag.replace(/-/g, ' '));
+  return [scope, ...tags].join(' · ');
+}
+
 export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(() => readDemoIdFromUrl());
   const [demo, setDemo] = useState<DemoModule | null>(null);
@@ -165,6 +174,8 @@ export default function App() {
               muted={muted}
               onToggleMute={handleToggleMute}
               demoTitle={demo.manifest.title}
+              demoContext={buildDemoContext(demo)}
+              demoTagline={demo.manifest.tagline}
               onBackToGallery={handleBack}
               attackerLabel={demo.attacker?.label}
             />

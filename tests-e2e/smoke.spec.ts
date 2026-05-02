@@ -1,11 +1,36 @@
 import { test, expect } from '@playwright/test';
 
 const DEMOS = [
-  { id: 'newsroom-publish-chain', title: 'Newsroom Publish Chain' },
-  { id: 'pharma-recall-cascade', title: 'Pharma Recall Cascade' },
-  { id: 'shopping-mall', title: 'The Plaza Shopping Mall' },
-  { id: 'spaceport-launch-window', title: 'Spaceport Launch Window' },
-  { id: 'supply-chain', title: 'Cold-chain Supply Bots' },
+  {
+    id: 'newsroom-publish-chain',
+    title: 'Newsroom Publish Chain',
+    tagline:
+      'A reporter, fact-checker, editor, and publisher preserve editorial provenance across a four-agent release chain.',
+  },
+  {
+    id: 'pharma-recall-cascade',
+    title: 'Pharma Recall Cascade',
+    tagline:
+      'A manufacturer, regulator, wholesaler, and hospital pharmacy preserve the exact scope of an emergency drug recall.',
+  },
+  {
+    id: 'shopping-mall',
+    title: 'The Plaza Shopping Mall',
+    tagline:
+      'A shopper, a store, and a payment bot exchange signed handoffs in real time.',
+  },
+  {
+    id: 'spaceport-launch-window',
+    title: 'Spaceport Launch Window',
+    tagline:
+      'Weather, range safety, flight control, and the launch gate coordinate a signed go/no-go chain for a launch window.',
+  },
+  {
+    id: 'supply-chain',
+    title: 'Cold-chain Supply Bots',
+    tagline:
+      'A factory, a courier, and a receiver swap signed shipment manifests — and catch a courier that lies.',
+  },
 ];
 
 test.describe('Plaza gallery + demo — production build smoke', () => {
@@ -31,6 +56,9 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
     await expect(page.getByRole('heading', { name: 'Live trace' })).toBeVisible({
       timeout: 20_000,
     });
+    await expect(page.getByTestId('hud-demo-context')).toContainText(
+      'A shopper, a store, and a payment bot exchange signed handoffs in real time.',
+    );
 
     expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
   });
@@ -66,6 +94,7 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
         await expect(page).toHaveURL(new RegExp(`\\?demo=${demo.id}$`));
         await expect(page.locator('canvas')).toBeVisible({ timeout: 15_000 });
         await expect(page.getByText(demo.title)).toBeVisible({ timeout: 15_000 });
+        await expect(page.getByTestId('hud-demo-context')).toContainText(demo.tagline);
         await page.getByRole('button', { name: /Gallery/ }).click();
         await expect(page.getByRole('heading', { name: 'The Plaza Gallery' })).toBeVisible();
       });

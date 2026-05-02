@@ -6,6 +6,8 @@ interface HudProps {
   muted: boolean;
   onToggleMute: () => void;
   demoTitle?: string;
+  demoContext?: string;
+  demoTagline?: string;
   onBackToGallery?: () => void;
   attackerLabel?: string;
 }
@@ -18,6 +20,8 @@ export function Hud({
   muted,
   onToggleMute,
   demoTitle,
+  demoContext,
+  demoTagline,
   onBackToGallery,
   attackerLabel,
 }: HudProps) {
@@ -95,9 +99,19 @@ export function Hud({
         </button>
       </div>
 
-      <div className="pointer-events-none rounded border border-plaza-border bg-plaza-panel/80 px-3 py-2 text-[11px] text-plaza-dim backdrop-blur">
-        <span className="font-mono text-plaza-accent">Day 7</span> · gallery · community demos
-      </div>
+      {(demoContext || demoTagline) && (
+        <div
+          data-testid="hud-demo-context"
+          className="pointer-events-none max-w-[320px] rounded border border-plaza-border bg-plaza-panel/80 px-3 py-2 text-[11px] text-plaza-dim backdrop-blur"
+        >
+          {demoContext && (
+            <p className="font-mono text-[10px] uppercase tracking-wide text-plaza-accent/90">
+              {demoContext}
+            </p>
+          )}
+          {demoTagline && <p className="mt-1 leading-snug text-plaza-dim">{demoTagline}</p>}
+        </div>
+      )}
     </div>
   );
 }
