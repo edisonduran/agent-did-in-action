@@ -59,8 +59,9 @@ export function TraceInspector({
             data-testid="crypto-disclaimer"
           >
             <span className="font-semibold text-plaza-accent">No blockchain. </span>
-            Real Ed25519 keys are generated in this browser tab and never leave it.
-            Signatures are real; there is no on-chain registry, no RPC call, no gas.
+            Real Ed25519 keys + W3C DID documents are generated in this browser tab
+            and live only in memory — no on-chain registry, no RPC, no gas, no
+            persistence. Close the tab and every agent identity is gone.
           </p>
         </section>
       )}
