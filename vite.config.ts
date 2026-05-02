@@ -16,6 +16,23 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('pixi.js')) return 'pixi';
+            if (id.includes('@agentdid/sdk') || id.includes('@noble') || id.includes('ethers')) {
+              return 'sdk';
+            }
+            if (id.includes('react') || id.includes('scheduler')) return 'react-vendor';
+          }
+          return undefined;
+        }
+      }
+    }
+  },
   server: {
     port: 5173
   }

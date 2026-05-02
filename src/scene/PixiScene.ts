@@ -39,10 +39,12 @@ const TILE_COLOR_B = 0x141c25;
 interface AgentNode {
   sprite: Sprite;
   label: Text;
+  halo: Graphics;
   current: GridPoint;
   target: GridPoint;
   travel: { startMs: number; durationMs: number; from: GridPoint } | null;
   shake: { startMs: number; durationMs: number } | null;
+  glow: { startMs: number; durationMs: number; color: number } | null;
 }
 
 export class PixiScene {
@@ -97,6 +99,9 @@ export class PixiScene {
     this.agents.clear();
     for (const agent of agents) {
       const texture = await Assets.load(agent.spriteUrl);
+      const halo = new Graphics();
+      halo.alpha = 0;
+      this.agentLayer.addChild(halo);
       const sprite = new Sprite(texture);
       sprite.anchor.set(0.5, 1);
       this.agentLayer.addChild(sprite);
@@ -116,10 +121,12 @@ export class PixiScene {
       const node: AgentNode = {
         sprite,
         label,
+        halo,
         current: { ...agent.position },
         target: { ...agent.position },
         travel: null,
         shake: null,
+        glow: null,
       };
       this.agents.set(agent.id, node);
       this.applyNodePosition(node);
@@ -144,6 +151,14 @@ export class PixiScene {
     const node = this.agents.get(id);
     if (!node) return;
     node.shake = { startMs: this.elapsedMs, durationMs };
+  }
+
+  /** Pulse a colored halo under an agent — used on sign/verify. */
+  glowAgent(id: string, kind: 'sign' | 'verify' | 'block', durationMs = 900): void {
+    const node = this.agents.get(id);
+    if (!node) return;
+    const color = kind === 'verify' ? 0x22c55e : kind === 'block' ? 0xef4444 : 0x22d3ee;
+    node.glow = { startMs: this.elapsedMs, durationMs, color };
   }
 
   /** Flash a colored line + badge between two agents for ~1.2s. */
@@ -240,6 +255,24 @@ export class PixiScene {
     node.sprite.tint = tint;
     node.sprite.position.set(screen.x + dx, screen.y);
     node.label.position.set(screen.x + dx, screen.y + 4);
+
+    // Halo (sign/verify glow): ring ellipse under feet, fades over duration.
+    if (node.glow) {
+      const age = this.elapsedMs - node.glow.startMs;
+      const t = Math.min(1, age / node.glow.durationMs);
+      const radius = 22 + 12 * t;
+      node.halo.clear();
+      node.halo
+        .ellipse(screen.x + dx, screen.y - 4, radius, radius / 2.2)
+        .fill({ color: node.glow.color, alpha: 0.35 * (1 - t) });
+      node.halo.alpha = 1 - t;
+      if (t >= 1) {
+        node.glow = null;
+        node.halo.clear();
+      }
+    } else {
+      node.halo.alpha = 0;
+    }
   }
 
   private depthSort(): void {

@@ -62,6 +62,8 @@ describe('Hud blocked-counter', () => {
         attackerMode={false}
         onToggleAttacker={() => {}}
         blockedCount={0}
+        muted
+        onToggleMute={() => {}}
       />,
     );
     expect(html).not.toContain('View last');
@@ -76,6 +78,8 @@ describe('Hud blocked-counter', () => {
         onToggleAttacker={() => {}}
         blockedCount={3}
         onReopenLastBlock={() => {}}
+        muted
+        onToggleMute={() => {}}
       />,
     );
     expect(html).toContain('Attacker mode ON');
@@ -90,6 +94,8 @@ describe('Hud blocked-counter', () => {
         onToggleAttacker={() => {}}
         blockedCount={1}
         onReopenLastBlock={() => {}}
+        muted
+        onToggleMute={() => {}}
       />,
     );
     expect(html).toContain('handoff blocked');
@@ -98,9 +104,41 @@ describe('Hud blocked-counter', () => {
 
   it('disables the View-last button if no callback is provided', () => {
     const html = renderToStaticMarkup(
-      <Hud attackerMode onToggleAttacker={() => {}} blockedCount={2} />,
+      <Hud
+        attackerMode
+        onToggleAttacker={() => {}}
+        blockedCount={2}
+        muted
+        onToggleMute={() => {}}
+      />,
     );
     expect(html).toContain('disabled');
+  });
+
+  it('renders the sound toggle reflecting current mute state', () => {
+    const mutedHtml = renderToStaticMarkup(
+      <Hud
+        attackerMode={false}
+        onToggleAttacker={() => {}}
+        blockedCount={0}
+        muted
+        onToggleMute={() => {}}
+      />,
+    );
+    expect(mutedHtml).toContain('Sound off');
+    expect(mutedHtml).toContain('click to unmute');
+
+    const unmutedHtml = renderToStaticMarkup(
+      <Hud
+        attackerMode={false}
+        onToggleAttacker={() => {}}
+        blockedCount={0}
+        muted={false}
+        onToggleMute={() => {}}
+      />,
+    );
+    expect(unmutedHtml).toContain('Sound on');
+    expect(unmutedHtml).toContain('click to mute');
   });
 });
 

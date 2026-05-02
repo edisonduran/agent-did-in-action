@@ -5,6 +5,7 @@ import { createShoppingMallScenario } from '../sim/scenarios/shoppingMall';
 import type { AgentSpec, InteractionResult } from '../sim/types';
 import type { SimEvent } from '../sim/events';
 import { TraceInspector, type TraceEntry } from '../ui/TraceInspector';
+import { playCue } from '../sound/cues';
 
 const SPECS: Record<string, AgentSpec> = {
   shopper: {
@@ -106,6 +107,8 @@ export function SceneContainer({ attackerMode, onBlocked }: SceneContainerProps)
           const fromId = idForDid(engine, r.signerDid);
           const toId = idForDid(engine, r.payload.to);
           if (fromId && toId) scene.flashLink(fromId, toId, 'sign');
+          if (fromId) scene.glowAgent(fromId, 'sign', 700);
+          playCue('sign');
           appendTrace(setTraces, {
             phase: 'signed',
             action: r.payload.action,
@@ -122,8 +125,11 @@ export function SceneContainer({ attackerMode, onBlocked }: SceneContainerProps)
           if (fromId && toId) {
             scene.flashLink(fromId, toId, r.verified ? 'verify' : 'block');
           }
+          if (toId) {
+            scene.glowAgent(toId, r.verified ? 'verify' : 'block', 900);
+          }
+          playCue(r.verified ? 'verify' : 'block');
           if (!r.verified) {
-            // Shake the receiver — it's the agent that detected the bad signature.
             if (toId) scene.shakeAgent(toId, 700);
             if (fromId) scene.shakeAgent(fromId, 500);
             onBlockedRef.current?.(r);

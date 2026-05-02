@@ -3,6 +3,8 @@ interface HudProps {
   onToggleAttacker: (next: boolean) => void;
   blockedCount: number;
   onReopenLastBlock?: () => void;
+  muted: boolean;
+  onToggleMute: () => void;
 }
 
 export function Hud({
@@ -10,6 +12,8 @@ export function Hud({
   onToggleAttacker,
   blockedCount,
   onReopenLastBlock,
+  muted,
+  onToggleMute,
 }: HudProps) {
   return (
     <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-2">
@@ -48,11 +52,22 @@ export function Hud({
             <span className="text-[10px] uppercase opacity-80">View last →</span>
           </button>
         )}
+        <button
+          type="button"
+          onClick={onToggleMute}
+          aria-pressed={!muted}
+          aria-label={muted ? 'Unmute sound' : 'Mute sound'}
+          className="mt-2 flex w-full items-center justify-between rounded border border-plaza-border bg-plaza-bg/40 px-2 py-1 text-[11px] text-plaza-dim hover:border-plaza-accent hover:text-plaza-accent"
+        >
+          <span>{muted ? '🔇 Sound off' : '🔊 Sound on'}</span>
+          <span className="text-[10px] uppercase opacity-70">
+            {muted ? 'click to unmute' : 'click to mute'}
+          </span>
+        </button>
       </div>
 
       <div className="pointer-events-none rounded border border-plaza-border bg-plaza-panel/80 px-3 py-2 text-[11px] text-plaza-dim backdrop-blur">
-        <span className="font-mono text-plaza-accent">Day 4</span> · attacker mode + blocked
-        modal
+        <span className="font-mono text-plaza-accent">Day 6</span> · polish · glow + sound
       </div>
     </div>
   );
