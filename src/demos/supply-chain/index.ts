@@ -19,7 +19,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You manufacture goods and sign every outgoing shipment',
       capabilities: ['shipment.issue', 'manifest.sign'],
     },
-    spriteUrl: '/sprites/agent-shopper.svg',
+    spriteUrl: '/sprites/agent-factory.svg',
     home: { gx: 1, gy: 2 },
   },
   {
@@ -31,7 +31,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You forward shipments and may not alter the manifest',
       capabilities: ['shipment.transport', 'manifest.relay'],
     },
-    spriteUrl: '/sprites/agent-store.svg',
+    spriteUrl: '/sprites/agent-courier.svg',
     home: { gx: 4, gy: 3 },
   },
   {
@@ -43,7 +43,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You only accept shipments whose manifest signature verifies',
       capabilities: ['shipment.receive', 'manifest.verify'],
     },
-    spriteUrl: '/sprites/agent-payment.svg',
+    spriteUrl: '/sprites/agent-warehouse.svg',
     home: { gx: 6, gy: 5 },
   },
 ];

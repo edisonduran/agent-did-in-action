@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <!-- Warehouse: hangar with stacked crates and roll-up door -->
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.25"/>
+  <!-- Building body -->
+  <rect x="8" y="36" width="64" height="36" fill="#3f3f46" stroke="#18181b" stroke-width="2"/>
+  <!-- Curved hangar roof -->
+  <path d="M6 36 Q40 18 74 36 Z" fill="#52525b" stroke="#18181b" stroke-width="2"/>
+  <!-- Roof ribs -->
+  <line x1="20" y1="29" x2="22" y2="36" stroke="#3f3f46" stroke-width="1.2"/>
+  <line x1="40" y1="22" x2="40" y2="36" stroke="#3f3f46" stroke-width="1.2"/>
+  <line x1="60" y1="29" x2="58" y2="36" stroke="#3f3f46" stroke-width="1.2"/>
+  <!-- Roll-up door -->
+  <rect x="28" y="46" width="24" height="26" fill="#a1a1aa"/>
+  <line x1="28" y1="52" x2="52" y2="52" stroke="#52525b" stroke-width="1"/>
+  <line x1="28" y1="58" x2="52" y2="58" stroke="#52525b" stroke-width="1"/>
+  <line x1="28" y1="64" x2="52" y2="64" stroke="#52525b" stroke-width="1"/>
+  <!-- Loading dock lights -->
+  <circle cx="14" cy="42" r="2" fill="#22c55e"/>
+  <circle cx="66" cy="42" r="2" fill="#22c55e"/>
+  <!-- Crate stack on the side -->
+  <rect x="60" y="58" width="8" height="6" fill="#a16207" stroke="#78350f" stroke-width="1"/>
+  <rect x="62" y="52" width="8" height="6" fill="#a16207" stroke="#78350f" stroke-width="1"/>
+  <!-- Sign -->
+  <text x="40" y="44" text-anchor="middle" font-family="monospace" font-size="5" fill="#fafafa" font-weight="bold">RECEIVER</text>
+</svg>

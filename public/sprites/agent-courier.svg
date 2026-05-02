@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <!-- Courier: delivery van, side view -->
+  <ellipse cx="40" cy="76" rx="32" ry="3" fill="#000" opacity="0.25"/>
+  <!-- Cargo box -->
+  <rect x="10" y="30" width="44" height="32" fill="#a855f7" stroke="#7e22ce" stroke-width="2"/>
+  <!-- Cab -->
+  <path d="M54 38 L70 38 L70 62 L54 62 Z" fill="#c084fc" stroke="#7e22ce" stroke-width="2"/>
+  <!-- Windshield -->
+  <rect x="56" y="40" width="12" height="10" fill="#bae6fd" opacity="0.85"/>
+  <!-- Door seam on cargo box -->
+  <line x1="32" y1="32" x2="32" y2="60" stroke="#7e22ce" stroke-width="1.5"/>
+  <!-- Package badge -->
+  <rect x="18" y="40" width="10" height="10" fill="#fde68a" stroke="#a16207" stroke-width="1"/>
+  <line x1="23" y1="40" x2="23" y2="50" stroke="#a16207" stroke-width="1"/>
+  <line x1="18" y1="45" x2="28" y2="45" stroke="#a16207" stroke-width="1"/>
+  <!-- Wheels -->
+  <circle cx="22" cy="64" r="6" fill="#1f2937" stroke="#0f172a" stroke-width="1.5"/>
+  <circle cx="22" cy="64" r="2" fill="#9ca3af"/>
+  <circle cx="60" cy="64" r="6" fill="#1f2937" stroke="#0f172a" stroke-width="1.5"/>
+  <circle cx="60" cy="64" r="2" fill="#9ca3af"/>
+  <!-- Headlight -->
+  <circle cx="69" cy="56" r="2" fill="#fbbf24"/>
+</svg>
