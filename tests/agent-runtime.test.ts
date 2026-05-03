@@ -46,7 +46,7 @@ describe('AgentRuntime', () => {
       from: store.did,
       to: 'did:agent:payment-bot',
       action: 'charge',
-      amount: 42,
+      claims: { priceUsd: 42 },
       nonce: 'test-nonce-1',
     };
     const signed = await store.sign(payload);
@@ -61,7 +61,7 @@ describe('AgentRuntime', () => {
       from: store.did,
       to: 'did:agent:payment-bot',
       action: 'charge',
-      amount: 100,
+      claims: { priceUsd: 100 },
       nonce: 'test-nonce-2',
     };
     const signed = await store.sign(payload);
@@ -85,7 +85,7 @@ describe('AgentRuntime', () => {
       from: shopper.did,
       to: 'did:agent:payment-bot',
       action: 'charge',
-      amount: 999,
+      claims: { priceUsd: 999 },
       nonce: 'test-nonce-3',
     };
     // Shopper actually signs it

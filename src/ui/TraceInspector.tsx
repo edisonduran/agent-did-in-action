@@ -1,4 +1,8 @@
-import type { InteractionPayload, InteractionResult } from '../sim/types';
+import type {
+  InteractionClaimValue,
+  InteractionPayload,
+  InteractionResult,
+} from '../sim/types';
 import type { DemoAttacker, DemoUseCase } from '../demos/types';
 
 export interface TraceEntry {
@@ -26,6 +30,8 @@ export function TraceInspector({
   useCase,
   attackerInfo,
 }: TraceInspectorProps) {
+  const mitmChannelActive = attackerInfo?.kind === 'mitm-channel';
+
   return (
     <aside className="flex h-full flex-col border-l border-plaza-border bg-plaza-panel/95 backdrop-blur">
       <header className="border-b border-plaza-border px-4 py-3">
@@ -88,6 +94,15 @@ export function TraceInspector({
                 : 'mitm-channel'}
             </span>
           </p>
+          {mitmChannelActive && (
+            <p
+              className="mt-2 rounded border border-plaza-bad/20 bg-plaza-bad/5 px-2 py-1 text-[10px] leading-snug text-plaza-dim"
+              data-testid="mitm-attack-note"
+            >
+              Channel tampering only: the payload claims stay intact, but the
+              signature is corrupted in transit.
+            </p>
+          )}
         </section>
       )}
 
@@ -105,8 +120,19 @@ export function TraceInspector({
           </div>
           <div className="font-mono text-[11px] text-plaza-dim">
             <div>action: <span className="text-plaza-accent">{latest.payload.action}</span></div>
-            {typeof latest.payload.amount === 'number' && (
-              <div>amount: <span className="text-plaza-accent">${latest.payload.amount}</span></div>
+            {Object.entries(latest.payload.claims ?? {}).map(([key, value]) => (
+              <div key={key}>
+                {formatClaimLabel(key)}:{' '}
+                <span className="text-plaza-accent">{formatClaimValue(key, value)}</span>
+              </div>
+            ))}
+            {mitmChannelActive && !latest.verified && (
+              <div data-testid="mitm-blocked-forensics">
+                forensics:{' '}
+                <span className="text-plaza-accent">
+                  payload intact; signature corrupted in transit
+                </span>
+              </div>
             )}
             <div className="truncate" title={latest.signerDid}>signer: {short(latest.signerDid)}</div>
             <div className="truncate" title={latest.signature}>sig: {short(latest.signature)}</div>
@@ -153,4 +179,22 @@ export function TraceInspector({
 function short(s: string): string {
   if (s.length <= 24) return s;
   return `${s.slice(0, 14)}…${s.slice(-6)}`;
+}
+
+function formatClaimLabel(key: string): string {
+  const baseKey = key.endsWith('Usd') ? key.slice(0, -3) : key;
+  return baseKey.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase();
+}
+
+function formatClaimValue(key: string, value: InteractionClaimValue): string {
+  if (key.endsWith('Usd') && typeof value === 'number') {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  return String(value);
 }

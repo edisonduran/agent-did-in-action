@@ -35,11 +35,15 @@ export interface AgentSnapshot {
   did: string;
 }
 
+export type InteractionClaimValue = string | number | boolean;
+
+export type InteractionClaims = Record<string, InteractionClaimValue>;
+
 export interface InteractionPayload {
   from: string;
   to: string;
   action: string;
-  amount?: number;
+  claims?: InteractionClaims;
   nonce: string;
 }
 

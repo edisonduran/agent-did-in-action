@@ -17,7 +17,7 @@ describe('newsroom-publish-chain demo', () => {
     expect(results).toHaveLength(3);
     expect(results.every((r) => r.verified)).toBe(true);
     expect(results[2].payload.action).toBe('story.cleared');
-    expect(results[2].payload.amount).toBe(7);
+    expect(results[2].payload.claims?.revision).toBe(7);
   });
 
   it('attacker mode: editor changes revision and publisher blocks it', async () => {
@@ -27,7 +27,7 @@ describe('newsroom-publish-chain demo', () => {
     expect(results[0].verified).toBe(true);
     expect(results[1].verified).toBe(true);
     expect(results[2].verified).toBe(false);
-    expect(results[2].payload.amount).toBe(8);
+    expect(results[2].payload.claims?.revision).toBe(8);
     expect(results[2].blockedReason).toBe('revision-altered-after-clearance');
   });
 

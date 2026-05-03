@@ -26,7 +26,7 @@ const AGENTS: DemoAgent[] = [
       'const signed = await manufacturer.sign({',
       "  to: regulator.did,",
       "  action: 'recall.notice',",
-      '  amount: 240,',
+      '  claims: { recallUnits: 240 },',
       '  nonce: crypto.randomUUID(),',
       '});',
     ].join('\n'),
@@ -107,11 +107,12 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
 
       const results: InteractionResult[] = [];
 
+      const recallUnits = 240;
       const notice: InteractionPayload = {
         from: manufacturer.did,
         to: regulator.did,
         action: 'recall.notice',
-        amount: 240,
+        claims: { recallUnits },
         nonce: nonce(),
       };
       engine.bus.emit({
@@ -139,7 +140,7 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
         from: regulator.did,
         to: pharmacy.did,
         action: 'recall.authorized',
-        amount: notice.amount,
+        claims: { recallUnits },
         nonce: nonce(),
       };
       engine.bus.emit({
@@ -165,7 +166,10 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
 
       const relayedAuthorized: InteractionPayload = {
         ...authorizedSigned.payload,
-        amount: opts.attackerMode() ? 24 : authorizedSigned.payload.amount,
+        claims: {
+          ...(authorizedSigned.payload.claims ?? {}),
+          recallUnits: opts.attackerMode() ? 24 : recallUnits,
+        },
       };
       engine.bus.emit({
         type: 'interaction.started',

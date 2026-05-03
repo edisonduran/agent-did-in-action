@@ -17,17 +17,17 @@ describe('supply-chain demo', () => {
     expect(results).toHaveLength(2);
     expect(results.every((r) => r.verified)).toBe(true);
     expect(results[0].payload.action).toBe('ship.manifest');
-    expect(results[1].payload.amount).toBe(12);
+    expect(results[1].payload.claims?.pallets).toBe(12);
   });
 
-  it('attacker mode: courier rewrites amount, receiver rejects with manifest-altered', async () => {
+  it('attacker mode: courier rewrites pallet count, receiver rejects with manifest-altered', async () => {
     const engine = await makeEngine();
     const scenario = supplyChainDemo.createScenario(engine, { attackerMode: () => true });
     const results = await scenario.runOnce();
     expect(results[0].verified).toBe(true); // factory's own signature still valid
     expect(results[1].verified).toBe(false);
     expect(results[1].blockedReason).toBe('manifest-altered');
-    expect(results[1].payload.amount).toBe(99);
+    expect(results[1].payload.claims?.pallets).toBe(99);
   });
 
   it('emits a blocked event in attacker mode', async () => {

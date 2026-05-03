@@ -46,7 +46,7 @@ const AGENTS: DemoAgent[] = [
       "const signed = await store.sign({",
       "  to: payment.did,",
       "  action: 'charge',",
-      "  amount: 42,",
+      "  claims: { priceUsd: 42 },",
       "  nonce: crypto.randomUUID(),",
       "});",
     ].join('\n'),
@@ -124,11 +124,12 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
       results.push(greetResult);
 
       // ---- Step B: store hands charge to payment ----
+      const priceUsd = 42;
       const charge: InteractionPayload = {
         from: store.did,
         to: payment.did,
         action: 'charge',
-        amount: 42,
+        claims: { priceUsd },
         nonce: nonce(),
       };
       engine.bus.emit({

@@ -1,4 +1,8 @@
-import type { InteractionPayload, InteractionResult } from '../sim/types';
+import type {
+  InteractionClaimValue,
+  InteractionPayload,
+  InteractionResult,
+} from '../sim/types';
 
 function shortDid(did: string): string {
   if (did.length <= 22) return did;
@@ -14,9 +18,23 @@ function payloadLines(p: InteractionPayload, indent = '  '): string {
   const lines: string[] = [];
   lines.push(`${indent}to: '${shortDid(p.to)}',`);
   lines.push(`${indent}action: '${p.action}',`);
-  if (typeof p.amount === 'number') lines.push(`${indent}amount: ${p.amount},`);
+  if (p.claims && Object.keys(p.claims).length > 0) {
+    lines.push(`${indent}claims: {`);
+    for (const [key, value] of Object.entries(p.claims)) {
+      lines.push(`${indent}  ${key}: ${claimLiteral(value)},`);
+    }
+    lines.push(`${indent}},`);
+  }
   lines.push(`${indent}nonce: '${p.nonce}',`);
   return lines.join('\n');
+}
+
+function claimLiteral(value: InteractionClaimValue): string {
+  if (typeof value === 'string') {
+    return `'${value.replace(/'/g, "\\'")}'`;
+  }
+
+  return String(value);
 }
 
 /** Snippet shown when the agent has just SIGNED a payload. */

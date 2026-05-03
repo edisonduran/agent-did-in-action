@@ -61,9 +61,9 @@ export function BlockedModal({
         <dl className="mb-4 space-y-1.5 rounded border border-plaza-border bg-plaza-bg/60 p-3 font-mono text-[11px] text-plaza-dim">
           <Row label="reason" value={result.blockedReason ?? 'unknown'} accent="bad" />
           <Row label="action" value={result.payload.action} />
-          {typeof result.payload.amount === 'number' && (
-            <Row label="amount" value={`$${result.payload.amount}`} />
-          )}
+          {Object.entries(result.payload.claims ?? {}).map(([key, value]) => (
+            <Row key={key} label={formatClaimLabel(key)} value={formatClaimValue(key, value)} />
+          ))}
           <Row label="signer" value={short(result.signerDid)} mono />
           <Row label="signature" value={short(result.signature)} mono />
         </dl>
@@ -140,4 +140,22 @@ function Row({
 function short(s: string): string {
   if (s.length <= 28) return s;
   return `${s.slice(0, 16)}…${s.slice(-8)}`;
+}
+
+function formatClaimLabel(key: string): string {
+  const baseKey = key.endsWith('Usd') ? key.slice(0, -3) : key;
+  return baseKey.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase();
+}
+
+function formatClaimValue(key: string, value: string | number | boolean): string {
+  if (key.endsWith('Usd') && typeof value === 'number') {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  return String(value);
 }

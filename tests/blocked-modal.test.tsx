@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { BlockedModal } from '../src/ui/BlockedModal';
 import { Hud } from '../src/ui/Hud';
+import { TraceInspector } from '../src/ui/TraceInspector';
 import type { InteractionResult } from '../src/sim/types';
 
 const sampleResult: InteractionResult = {
@@ -9,7 +10,7 @@ const sampleResult: InteractionResult = {
     from: 'did:agent:zStoreXYZ',
     to: 'did:agent:zPaymentABC',
     action: 'payment.charge',
-    amount: 42,
+    claims: { priceUsd: 42 },
     nonce: 'abcd1234',
   },
   signature: '0xdeadbeefcafebabe1234567890abcdef',
@@ -52,6 +53,54 @@ describe('BlockedModal', () => {
       <BlockedModal result={sampleResult} totalBlocks={7} onDismiss={() => {}} />,
     );
     expect(html).toContain('>7<');
+  });
+});
+
+describe('TraceInspector attacker guidance', () => {
+  it('explains MITM demos keep the payload intact and corrupt the signature in transit', () => {
+    const html = renderToStaticMarkup(
+      <TraceInspector
+        traces={[]}
+        latest={sampleResult}
+        attacker
+        useCase={{
+          scenario: 'A store signs a charge for a payment bot.',
+          whyItMatters: 'The receiver must detect channel tampering.',
+        }}
+        attackerInfo={{
+          kind: 'mitm-channel',
+          from: 'store',
+          to: 'payment',
+          label: 'MITM on Store → Payment',
+          description: 'The channel flips signature bytes in flight.',
+        }}
+      />,
+    );
+    expect(html).toContain('Channel tampering only: the payload claims stay intact');
+    expect(html).toContain('forensics:');
+    expect(html).toContain('payload intact; signature corrupted in transit');
+  });
+
+  it('does not show the MITM guidance for malicious-agent demos', () => {
+    const html = renderToStaticMarkup(
+      <TraceInspector
+        traces={[]}
+        latest={sampleResult}
+        attacker
+        useCase={{
+          scenario: 'A courier relays a shipment manifest.',
+          whyItMatters: 'The receiver must detect payload mutation.',
+        }}
+        attackerInfo={{
+          kind: 'malicious-agent',
+          agentId: 'courier',
+          label: 'Courier-Logistics-12 (rogue)',
+          description: 'The courier rewrites the signed pallet count.',
+        }}
+      />,
+    );
+    expect(html).not.toContain('Channel tampering only: the payload claims stay intact');
+    expect(html).not.toContain('payload intact; signature corrupted in transit');
   });
 });
 

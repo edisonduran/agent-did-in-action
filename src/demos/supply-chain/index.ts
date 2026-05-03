@@ -26,7 +26,7 @@ const AGENTS: DemoAgent[] = [
       "const signed = await factory.sign({",
       "  to: receiver.did,",
       "  action: 'ship.manifest',",
-      "  amount: 12, // pallet count",
+      "  claims: { pallets: 12 },",
       "  nonce: crypto.randomUUID(),",
       "});",
     ].join('\n'),
@@ -90,12 +90,12 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
       const results: InteractionResult[] = [];
 
       // ---- Step A: factory issues a signed manifest to the courier ----
+      const palletCount = 12;
       const manifestPayload: InteractionPayload = {
         from: factory.did,
         to: receiver.did, // the manifest is addressed to the receiver
         action: 'ship.manifest',
-        // We piggy-back on the existing typed fields: amount = pallet count.
-        amount: 12,
+        claims: { pallets: palletCount },
         nonce: nonce(),
       };
       engine.bus.emit({
@@ -120,10 +120,13 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
       results.push(issuedResult);
 
       // ---- Step B: courier relays to receiver. Honest courier = forward as-is.
-      // Attacker mode = courier rewrites `amount` to 99 but keeps the original signature.
+      // Attacker mode = courier rewrites `claims.pallets` to 99 but keeps the original signature.
       const tampered = opts.attackerMode();
       const relayedPayload: InteractionPayload = tampered
-        ? { ...issued.payload, amount: 99 }
+        ? {
+            ...issued.payload,
+            claims: { ...(issued.payload.claims ?? {}), pallets: 99 },
+          }
         : issued.payload;
 
       engine.bus.emit({
@@ -182,7 +185,7 @@ const demo: DemoModule = {
     agentId: 'courier',
     label: 'Courier-Logistics-12 (rogue)',
     description:
-      'The courier rewrites amount: 12 → 99 in the manifest before relaying it to the receiver, while keeping the factory’s original signature. Verification will fail with manifest-altered.',
+      'The courier rewrites the signed pallet count: 12 → 99 in the manifest before relaying it to the receiver, while keeping the factory’s original signature. Verification will fail with manifest-altered.',
   },
   createScenario,
   choreography,

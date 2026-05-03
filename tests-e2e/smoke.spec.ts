@@ -4,6 +4,7 @@ const DEMOS = [
   {
     id: 'newsroom-publish-chain',
     title: 'Newsroom Publish Chain',
+    latestClaim: 'revision: 7',
     tagline:
       'A reporter, fact-checker, editor, and publisher preserve editorial provenance across a four-agent release chain.',
     hint:
@@ -12,6 +13,7 @@ const DEMOS = [
   {
     id: 'pharma-recall-cascade',
     title: 'Pharma Recall Cascade',
+    latestClaim: 'recall units: 240',
     tagline:
       'A manufacturer, regulator, wholesaler, and hospital pharmacy preserve the exact scope of an emergency drug recall.',
     hint:
@@ -20,6 +22,7 @@ const DEMOS = [
   {
     id: 'shopping-mall',
     title: 'The Plaza Shopping Mall',
+    latestClaim: 'price: $42',
     tagline:
       'A shopper, a store, and a payment bot exchange signed handoffs in real time.',
     hint:
@@ -28,6 +31,7 @@ const DEMOS = [
   {
     id: 'spaceport-launch-window',
     title: 'Spaceport Launch Window',
+    latestClaim: 'window minutes: 18',
     tagline:
       'Weather, range safety, flight control, and the launch gate coordinate a signed go/no-go chain for a launch window.',
     hint:
@@ -36,6 +40,7 @@ const DEMOS = [
   {
     id: 'supply-chain',
     title: 'Cold-chain Supply Bots',
+    latestClaim: 'pallets: 12',
     tagline:
       'A factory, a courier, and a receiver swap signed shipment manifests — and catch a courier that lies.',
     hint:
@@ -75,6 +80,7 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
       'A shopper, a store, and a payment bot exchange signed handoffs in real time.',
     );
     await expect(page.getByText('Multi-agent commerce: how do we know the bot taking your money is actually the one the store hired?')).toBeVisible();
+    await expect(page.getByText('price: $42', { exact: true })).toBeVisible({ timeout: 20_000 });
 
     expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
   });
@@ -90,6 +96,52 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
     await expect(page.getByText('Handoff blocked by the SDK')).toBeVisible();
     await expect(page.getByRole('dialog').getByText('manifest-altered').first()).toBeVisible();
     await expect(page.getByRole('link', { name: /Read the spec/ })).toBeVisible();
+  });
+
+  test('attacker mode in the shopping-mall demo explains MITM signature corruption', async ({ page }) => {
+    await page.goto('/?demo=shopping-mall');
+    await expect(page.getByRole('heading', { name: 'Live trace' })).toBeVisible({
+      timeout: 20_000,
+    });
+
+    const toggle = page.getByRole('checkbox');
+    await toggle.check();
+
+    await expect(page.getByTestId('attacker-panel')).toBeVisible();
+    await expect(page.getByTestId('mitm-attack-note')).toContainText(
+      'Channel tampering only: the payload claims stay intact, but the signature is corrupted in transit.',
+    );
+
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText('Handoff blocked by the SDK')).toBeVisible();
+    await expect(page.getByRole('dialog').getByText('tampered-signature').first()).toBeVisible();
+    await expect(page.getByTestId('mitm-blocked-forensics')).toContainText(
+      'payload intact; signature corrupted in transit',
+    );
+    await expect(page.getByText('price: $42', { exact: true })).toBeVisible();
+  });
+
+  test('attacker mode in the spaceport demo explains MITM signature corruption', async ({ page }) => {
+    await page.goto('/?demo=spaceport-launch-window');
+    await expect(page.getByRole('heading', { name: 'Live trace' })).toBeVisible({
+      timeout: 20_000,
+    });
+
+    const toggle = page.getByRole('checkbox');
+    await toggle.check();
+
+    await expect(page.getByTestId('attacker-panel')).toBeVisible();
+    await expect(page.getByTestId('mitm-attack-note')).toContainText(
+      'Channel tampering only: the payload claims stay intact, but the signature is corrupted in transit.',
+    );
+
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText('Handoff blocked by the SDK')).toBeVisible();
+    await expect(page.getByRole('dialog').getByText('tampered-launch-clearance').first()).toBeVisible();
+    await expect(page.getByTestId('mitm-blocked-forensics')).toContainText(
+      'payload intact; signature corrupted in transit',
+    );
+    await expect(page.getByText('window minutes: 18', { exact: true })).toBeVisible();
   });
 
   test('gallery selector can open all five demos one by one', async ({ page }) => {
@@ -113,6 +165,7 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
         await expect(page.locator('main').getByText(demo.title)).toBeVisible({ timeout: 15_000 });
         await expect(page.getByTestId('hud-demo-context')).toContainText(demo.tagline);
         await expect(page.getByText(demo.hint)).toBeVisible();
+        await expect(page.getByText(demo.latestClaim, { exact: true })).toBeVisible({ timeout: 20_000 });
         await page.getByRole('button', { name: /Gallery/ }).click();
         await expect(page.getByTestId('app-header-title')).toHaveText('Browse demos');
         await expect(page.getByRole('heading', { name: 'The Plaza Gallery' })).toBeVisible();

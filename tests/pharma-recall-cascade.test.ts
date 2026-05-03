@@ -17,7 +17,7 @@ describe('pharma-recall-cascade demo', () => {
     expect(results).toHaveLength(3);
     expect(results.every((r) => r.verified)).toBe(true);
     expect(results[2].payload.action).toBe('recall.authorized');
-    expect(results[2].payload.amount).toBe(240);
+    expect(results[2].payload.claims?.recallUnits).toBe(240);
   });
 
   it('attacker mode: wholesaler shrinks the scope and pharmacy blocks it', async () => {
@@ -27,7 +27,7 @@ describe('pharma-recall-cascade demo', () => {
     expect(results[0].verified).toBe(true);
     expect(results[1].verified).toBe(true);
     expect(results[2].verified).toBe(false);
-    expect(results[2].payload.amount).toBe(24);
+    expect(results[2].payload.claims?.recallUnits).toBe(24);
     expect(results[2].blockedReason).toBe('recall-scope-altered');
   });
 

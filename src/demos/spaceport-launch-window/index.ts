@@ -26,7 +26,7 @@ const AGENTS: DemoAgent[] = [
       'const signed = await weather.sign({',
       "  to: rangeSafety.did,",
       "  action: 'launch.weather-window',",
-      '  amount: 18,',
+      '  claims: { windowMinutes: 18 },',
       '  nonce: crypto.randomUUID(),',
       '});',
     ].join('\n'),
@@ -113,11 +113,12 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
 
       const results: InteractionResult[] = [];
 
+      const windowMinutes = 18;
       const weatherPayload: InteractionPayload = {
         from: weather.did,
         to: rangeSafety.did,
         action: 'launch.weather-window',
-        amount: 18,
+        claims: { windowMinutes },
         nonce: nonce(),
       };
       engine.bus.emit({
@@ -145,7 +146,7 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
         from: rangeSafety.did,
         to: launchGate.did,
         action: 'launch.cleared',
-        amount: weatherPayload.amount,
+        claims: { windowMinutes },
         nonce: nonce(),
       };
       engine.bus.emit({

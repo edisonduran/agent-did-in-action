@@ -26,7 +26,7 @@ const AGENTS: DemoAgent[] = [
       'const signed = await reporter.sign({',
       "  to: factChecker.did,",
       "  action: 'story.draft',",
-      '  amount: 7, // revision number',
+      '  claims: { revision: 7 },',
       '  nonce: crypto.randomUUID(),',
       '});',
     ].join('\n'),
@@ -107,11 +107,12 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
 
       const results: InteractionResult[] = [];
 
+      const approvedRevision = 7;
       const draft: InteractionPayload = {
         from: reporter.did,
         to: factChecker.did,
         action: 'story.draft',
-        amount: 7,
+        claims: { revision: approvedRevision },
         nonce: nonce(),
       };
       engine.bus.emit({
@@ -139,7 +140,7 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
         from: factChecker.did,
         to: publisher.did,
         action: 'story.cleared',
-        amount: draft.amount,
+        claims: { revision: approvedRevision },
         nonce: nonce(),
       };
       engine.bus.emit({
@@ -166,7 +167,10 @@ function createScenario(engine: SimulationEngine, opts: DemoScenarioOpts) {
       const tampered = opts.attackerMode();
       const relayedClearance: InteractionPayload = {
         ...clearanceSigned.payload,
-        amount: tampered ? 8 : clearanceSigned.payload.amount,
+        claims: {
+          ...(clearanceSigned.payload.claims ?? {}),
+          revision: tampered ? approvedRevision + 1 : approvedRevision,
+        },
       };
       engine.bus.emit({
         type: 'interaction.started',
