@@ -4,7 +4,7 @@
  * Goals:
  *   - Make the block feel consequential (not just a colored line).
  *   - Show the actual `blockedReason` from the SDK (no fake copy).
- *   - Funnel curious viewers to CTA-3 ("Talk to maintainer") and the spec.
+ *   - Funnel curious viewers to the spec instead of leaving them at a dead end.
  *
  * It is dismissable. The parent decides when to (re-)open it.
  */
@@ -16,12 +16,9 @@ interface BlockedModalProps {
   result: InteractionResult;
   totalBlocks: number;
   onDismiss: () => void;
-  maintainerUrl?: string;
   specUrl?: string;
 }
 
-const DEFAULT_MAINTAINER_URL =
-  'https://github.com/edisonduran/agent-did/issues/new?title=Question+from+Plaza+demo';
 const DEFAULT_SPEC_URL =
   'https://github.com/edisonduran/agent-did/blob/main/docs/RFC-001-Agent-DID-Specification.md';
 
@@ -29,7 +26,6 @@ export function BlockedModal({
   result,
   totalBlocks,
   onDismiss,
-  maintainerUrl = DEFAULT_MAINTAINER_URL,
   specUrl = DEFAULT_SPEC_URL,
 }: BlockedModalProps) {
   return (
@@ -74,24 +70,15 @@ export function BlockedModal({
           <span className="font-mono text-plaza-accent">{totalBlocks}</span>.
         </p>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div>
           <a
             href={specUrl}
             target="_blank"
             rel="noreferrer noopener"
             onClick={() => track('cta.spec.clicked', { source: 'blocked-modal' })}
-            className="flex-1 rounded border border-plaza-border bg-plaza-bg px-3 py-2 text-center text-xs font-semibold text-plaza-accent hover:border-plaza-accent"
+            className="block rounded border border-plaza-border bg-plaza-bg px-3 py-2 text-center text-xs font-semibold text-plaza-accent hover:border-plaza-accent"
           >
             Read the spec →
-          </a>
-          <a
-            href={maintainerUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            onClick={() => track('cta.maintainer.clicked', { source: 'blocked-modal' })}
-            className="flex-1 rounded bg-plaza-accent px-3 py-2 text-center text-xs font-semibold text-plaza-bg hover:bg-cyan-300"
-          >
-            Talk to maintainer →
           </a>
         </div>
 

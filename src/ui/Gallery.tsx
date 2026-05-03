@@ -126,13 +126,28 @@ export function Gallery({ onPick }: GalleryProps) {
         <footer className="mt-10 rounded-lg border border-dashed border-plaza-border p-5 text-sm text-plaza-dim">
           <h3 className="mb-1 text-plaza-text">Want to add your own?</h3>
           <p>
-            Drop a folder under{' '}
+            Start a folder under{' '}
             <code className="text-plaza-accent">src/demos/&lt;your-id&gt;/</code>{' '}
-            with a <code className="text-plaza-accent">manifest.json</code> and an{' '}
-            <code className="text-plaza-accent">index.ts</code> exporting a{' '}
-            <code className="text-plaza-accent">DemoModule</code>. Then run{' '}
-            <code className="text-plaza-accent">npm run validate:demos</code> and
-            open a PR.
+            and follow{' '}
+            <a
+              className="text-plaza-accent hover:underline"
+              href="https://github.com/edisonduran/agent-did-in-action/blob/main/CONTRIBUTING.md"
+              target="_blank"
+              rel="noreferrer"
+            >
+              CONTRIBUTING.md
+            </a>{' '}
+            plus{' '}
+            <a
+              className="text-plaza-accent hover:underline"
+              href="https://github.com/edisonduran/agent-did-in-action/blob/main/docs/DEMO-SPEC.md"
+              target="_blank"
+              rel="noreferrer"
+            >
+              the demo spec
+            </a>{' '}
+            for the required files, <code className="text-plaza-accent">DemoModule</code>{' '}
+            shape, tests, and CI checks before opening a PR.
           </p>
         </footer>
       </div>

@@ -29,12 +29,12 @@ describe('BlockedModal', () => {
     expect(html).toContain('VerificationBlockedError');
   });
 
-  it('renders both CTAs (spec + maintainer)', () => {
+  it('renders only the spec CTA', () => {
     const html = renderToStaticMarkup(
       <BlockedModal result={sampleResult} totalBlocks={3} onDismiss={() => {}} />,
     );
     expect(html).toContain('Read the spec');
-    expect(html).toContain('Talk to maintainer');
+    expect(html).not.toContain('Talk to maintainer');
     expect(html).toMatch(/href="https:\/\/github\.com\/.+spec/i);
   });
 
