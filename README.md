@@ -154,7 +154,7 @@ Production builds opt into [Plausible](https://plausible.io) when the env vars
 are set at build time:
 
 ```bash
-VITE_PLAUSIBLE_DOMAIN=agent-did-in-action.agent-did.dev
+VITE_PLAUSIBLE_DOMAIN=edisonduran.github.io
 VITE_PLAUSIBLE_SCRIPT=https://plausible.io/js/script.js   # optional override
 ```
 
