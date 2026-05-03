@@ -24,7 +24,7 @@ export function Gallery({ onPick }: GalleryProps) {
       <div className="mx-auto max-w-5xl px-6 py-10">
         <header className="mb-8">
           <h1 className="text-3xl font-semibold text-plaza-text">
-            The Plaza Gallery
+            Agent-DID in Action
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-plaza-dim">
             Pick a demo to watch real <code>@agentdid/sdk</code> signatures fly

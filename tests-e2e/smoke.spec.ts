@@ -48,7 +48,7 @@ const DEMOS = [
   },
 ];
 
-test.describe('Plaza gallery + demo — production build smoke', () => {
+test.describe('Agent-DID in Action gallery + demo - production build smoke', () => {
   test('gallery renders all demos, shows dedicated hero art, and you can deep-link to one', async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on('pageerror', (err) => consoleErrors.push(`pageerror: ${err.message}`));
@@ -59,7 +59,7 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
     await page.goto('/');
     await expect(page).toHaveTitle('Browse demos - Agent-DID');
     await expect(page.getByTestId('app-header-title')).toHaveText('Browse demos');
-    await expect(page.getByRole('heading', { name: 'The Plaza Gallery' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Agent-DID in Action' })).toBeVisible();
     for (const demo of DEMOS) {
       await expect(page.getByRole('heading', { name: demo.title })).toBeVisible();
     }
@@ -152,7 +152,7 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
     });
 
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'The Plaza Gallery' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Agent-DID in Action' })).toBeVisible();
 
     for (const demo of DEMOS) {
       await test.step(`open ${demo.id}`, async () => {
@@ -168,7 +168,7 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
         await expect(page.getByText(demo.latestClaim, { exact: true })).toBeVisible({ timeout: 20_000 });
         await page.getByRole('button', { name: /Gallery/ }).click();
         await expect(page.getByTestId('app-header-title')).toHaveText('Browse demos');
-        await expect(page.getByRole('heading', { name: 'The Plaza Gallery' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Agent-DID in Action' })).toBeVisible();
       });
     }
 

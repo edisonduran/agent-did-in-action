@@ -1,5 +1,5 @@
 /**
- * Shared types for the Agent-DID Plaza simulation.
+ * Shared types for the Agent-DID in Action simulation.
  *
  * Kept independent from any rendering library so the engine
  * can be unit-tested in pure Node.

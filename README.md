@@ -8,7 +8,7 @@
 [![Built on @agentdid/sdk](https://img.shields.io/badge/built%20on-%40agentdid%2Fsdk%200.2.0-success)](https://www.npmjs.com/package/@agentdid/sdk)
 [![CI](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml/badge.svg)](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml)
 
-![Agent-DID Plaza preview](public/og-image.svg)
+![Agent-DID in Action preview](public/og-image.svg)
 
 ---
 
@@ -41,7 +41,7 @@ deck, a static explainer, or a toy animation. Each scenario lazy-loads a real
 interactive demo with signed handoffs, verification events, attacker mode,
 blocked traces, and contributor-facing metadata.
 
-The current UI opens on the Plaza gallery, where every card includes hero art,
+The current UI opens on the Agent-DID in Action gallery, where every card includes hero art,
 tags, a problem statement, and a deep-linkable route. Opening a card switches
 into a full demo view with its own HUD, use-case narrative, attacker model, and
 live verification trace.
@@ -154,7 +154,7 @@ Production builds opt into [Plausible](https://plausible.io) when the env vars
 are set at build time:
 
 ```bash
-VITE_PLAUSIBLE_DOMAIN=plaza.agent-did.dev
+VITE_PLAUSIBLE_DOMAIN=agent-did-in-action.agent-did.dev
 VITE_PLAUSIBLE_SCRIPT=https://plausible.io/js/script.js   # optional override
 ```
 

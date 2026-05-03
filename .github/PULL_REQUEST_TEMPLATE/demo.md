@@ -1,6 +1,6 @@
 ---
 name: New community demo
-about: Add a new demo to the Plaza gallery
+about: Add a new demo to Agent-DID in Action
 labels: ['demo']
 ---
 
