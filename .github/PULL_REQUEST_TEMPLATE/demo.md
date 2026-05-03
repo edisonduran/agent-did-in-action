@@ -25,16 +25,18 @@ I confirm that this demo:
 - [ ] Passes `npm run lint`
 - [ ] Adds at least one unit test under `tests/<id>.test.ts`
 - [ ] Passes `npm test -- --run`
+- [ ] Passes `npm run smoke`
 - [ ] Passes `npm run build` and the new chunk is ≤ 150 KB gz
 - [ ] Uses **only** `@agentdid/sdk` for cryptography (no direct noble/ethers)
 - [ ] Honours both `attackerMode: false` (no blocks) and `true` (≥1 block)
 - [ ] Declares `useCase` (`scenario` + `whyItMatters`) for the side panel
 - [ ] Each agent declares a `codeSnippet` (default tooltip content)
+- [ ] Signed business values live under `payload.claims` with semantic keys (for example `priceUsd`, `pallets`, `revision`)
 - [ ] Declares `attacker` if the scenario branches on attacker mode (§2.2 of DEMO-SPEC)
 - [ ] Does not initialize its own telemetry, modals, or DOM overlays
 - [ ] Makes no outbound network requests
 - [ ] Is licensed Apache-2.0 or MIT (and `manifest.license` matches)
-- [ ] `manifest.official` is set to `false`
+- [ ] `manifest.official` is set to `false` (CI rejects `official=true` for new community demos)
 
 ## Screenshot or short clip
 

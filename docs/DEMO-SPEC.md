@@ -96,6 +96,26 @@ the actual call (real payload + truncated signature). Keep it ≤ 6 lines and
 use only `@agentdid/sdk` symbols you actually call. Every agent in `agents[]`
 must declare one — the hover tooltip is part of the demo's pedagogical contract.
 
+### 2.4 Signed payload data (`payload.claims`)
+
+If a handoff carries business data beyond `from`, `to`, `action`, and `nonce`,
+put it inside `payload.claims` with semantic keys the UI can render directly.
+
+```ts
+const payload = {
+  from: store.did,
+  to: payment.did,
+  action: 'charge',
+  claims: { priceUsd: 42 },
+  nonce: crypto.randomUUID(),
+};
+```
+
+Good keys describe the domain value, not just the type of the value. Prefer
+`priceUsd`, `pallets`, `revision`, `recallUnits`, or `windowMinutes` over a
+generic catch-all like `amount`. The trace inspector and live code snippets
+display these keys to the user verbatim.
+
 ## 3. The manifest — `manifest.json`
 
 Validated by [`scripts/validate-demos.mjs`](../scripts/validate-demos.mjs)
@@ -111,7 +131,7 @@ in CI. Required fields:
 | `license`       | string   | `Apache-2.0` or `MIT`                              |
 | `sdk_version`   | string   | semver range, e.g. `^0.2.0`                         |
 | `tags`          | string[] | 1..8 lowercase kebab-case tags                      |
-| `official`      | boolean  | community submissions MUST set `false`              |
+| `official`      | boolean  | reserved for core-team demos already promoted into the gallery; community submissions MUST set `false` |
 | `accent_color`  | string   | `#rrggbb`                                           |
 | `problem`       | string   | 8..200 chars; one-line user-facing problem statement |
 | `hero`          | string?  | optional path to image ≤ 200 KB                     |
@@ -132,7 +152,8 @@ A demo MUST:
    handoffs, and `attackerMode: true` produces at least one block. The HUD
    counter relies on this.
 7. Ship at least one unit test under `tests/<id>.test.ts` covering both modes.
-8. Pass `npm run lint`, `npm test -- --run`, and `npm run build`.
+8. Pass `npm run lint`, `npm test -- --run`, `npm run smoke`, `npm run build`,
+   and `npm run check:bundles`.
 9. Be Apache-2.0 or MIT licensed. The PR description is your CLA-light: by
    merging you agree your contribution is offered under that license.
 10. Declare a `useCase` (§2.1) and a `codeSnippet` per agent (§2.3). These are
@@ -141,6 +162,8 @@ A demo MUST:
 11. Declare an `attacker` (§2.2) **if and only if** your scenario branches on
     `opts.attackerMode()`. The HUD must always be able to tell the user who is
     being simulated as malicious.
+12. Put signed business values inside `payload.claims` (§2.4) and use semantic
+  keys, not a generic field name that hides the domain meaning from the user.
 
 ## 5. MUST NOT
 
@@ -160,10 +183,12 @@ A demo MUST NOT:
 
 ## 6. Validation pipeline
 
-1. **Local**: `npm run validate:demos && npm run lint && npm test -- --run && npm run build`
+1. **Local**: `npm run validate:demos && npm run lint && npm test -- --run && npm run smoke && npm run build && npm run check:bundles`
 2. **CI** (`.github/workflows/ci.yml`): runs the same plus `npm run test:e2e`.
-3. **Bundle**: `npm run build` reports a chunk per demo (`dist/assets/demo-<id>-*.js`).
-   If yours exceeds the 150 KB gz cap a maintainer will ask you to trim deps.
+3. **Bundle**: `npm run check:bundles` gzips each `dist/assets/demo-<id>-*.js`
+  chunk and fails above the 150 KB cap.
+4. **Official flag**: `official: true` is reserved for maintainer-promoted demos
+  already in the gallery. New community demos that set it will fail validation.
 
 ## 7. Contribution flow
 

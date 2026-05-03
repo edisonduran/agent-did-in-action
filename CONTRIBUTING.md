@@ -16,7 +16,8 @@ cd agent-did-in-action
 npm install
 
 # 1. Copy the official baseline as your starting point:
-cp -r src/demos/shopping-mall src/demos/your-id
+#    macOS / Linux: cp -r src/demos/shopping-mall src/demos/your-id
+#    PowerShell:    Copy-Item src/demos/shopping-mall src/demos/your-id -Recurse
 
 # 2. Edit manifest.json (id, title, author, license=Apache-2.0|MIT, official=false).
 # 3. Edit index.ts. Required fields on the exported DemoModule:
@@ -24,6 +25,9 @@ cp -r src/demos/shopping-mall src/demos/your-id
 #    - useCase: { scenario, whyItMatters } shown in the side panel.
 #    - attacker: { kind: 'malicious-agent' | 'mitm-channel', ... }
 #                 REQUIRED if your scenario calls opts.attackerMode().
+#    - signed business values: put them under `payload.claims` with semantic
+#                 keys like `priceUsd`, `pallets`, `revision`, or `windowMinutes`.
+#                 Do not reintroduce a generic `amount` field.
 #    See docs/DEMO-SPEC.md §2.1 / §2.2 / §2.3 for the exact shapes.
 # 4. Add tests/<your-id>.test.ts covering both attackerMode states.
 # 5. Register the demo in src/demos/_registry.ts (one line).
@@ -31,6 +35,7 @@ cp -r src/demos/shopping-mall src/demos/your-id
 npm run validate:demos
 npm run lint
 npm test -- --run
+npm run smoke
 npm run build
 npm run check:bundles    # enforces the 150 KB gz cap per demo
 
@@ -82,7 +87,7 @@ invest heavily, check open PRs to avoid duplicating work.
 ## Local checks (one-liner)
 
 ```bash
-npm run validate:demos && npm run lint && npm test -- --run && npm run build && npm run check:bundles
+npm run validate:demos && npm run lint && npm test -- --run && npm run smoke && npm run build && npm run check:bundles
 ```
 
 ## Automated CI guardrails
@@ -92,6 +97,7 @@ CI runs the same commands you do locally, plus enforces:
 | Gate | Tool | Rule |
 | --- | --- | --- |
 | Manifest schema | `validate:demos` | Required fields, kebab-case id, license allowlist, hero ≤ 200 KB. |
+| Official flag | `validate:demos` | `official=true` is reserved for allowlisted core demos already in the gallery. Community submissions must set `false`. |
 | Attacker contract | `validate:demos` | If your `index.ts` calls `opts.attackerMode()`, it MUST also export an `attacker` field (DEMO-SPEC §2.2 / MUST #11). The validator greps for this. |
 | Type contract | `lint` (`tsc --noEmit`) | `useCase` and per-agent `codeSnippet` are TypeScript-required. Forgetting either fails the build. |
 | Bundle budget | `check:bundles` | After `npm run build`, every `dist/assets/demo-<id>-*.js` is gzipped in memory and rejected if > 150 KB (DEMO-SPEC MUST #5). |

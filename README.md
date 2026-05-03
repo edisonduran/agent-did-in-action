@@ -217,11 +217,15 @@ Start here:
 - Follow the quick start in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 - Need an idea? Pick one from the recommended demo backlog in [`CONTRIBUTING.md`](CONTRIBUTING.md#recommended-demo-backlog).
 - Open a PR with [`.github/PULL_REQUEST_TEMPLATE/demo.md`](.github/PULL_REQUEST_TEMPLATE/demo.md).
-- Before opening the PR, run `npm run validate:demos`, `npm run lint`, `npm test -- --run`, `npm run build`, and `npm run check:bundles`.
+- Before opening the PR, run `npm run validate:demos`, `npm run lint`, `npm test -- --run`, `npm run smoke`, `npm run build`, and `npm run check:bundles`.
 
 Required surface (TypeScript-enforced + CI-checked): every demo declares
 a `useCase`, a `codeSnippet` per agent, and an `attacker` whenever the
-scenario reacts to attacker mode. Bundle cap: 150 KB gz per demo chunk.
+scenario reacts to attacker mode. Signed business values live under
+`payload.claims` with semantic keys like `priceUsd`, `pallets`, or `revision`.
+Community demos must keep `manifest.official = false`; CI reserves `true` for
+maintainer-promoted demos already in the gallery. Bundle cap: 150 KB gz per
+demo chunk.
 
 If you just want to browse candidate scenarios before building, start with the
 recommended backlog in [`CONTRIBUTING.md`](CONTRIBUTING.md#recommended-demo-backlog).

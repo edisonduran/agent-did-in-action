@@ -30,6 +30,13 @@ const REQUIRED_KEYS = [
   'problem',
 ];
 const ALLOWED_LICENSES = new Set(['Apache-2.0', 'MIT']);
+const OFFICIAL_DEMO_IDS = new Set([
+  'shopping-mall',
+  'supply-chain',
+  'newsroom-publish-chain',
+  'pharma-recall-cascade',
+  'spaceport-launch-window',
+]);
 
 function fail(msg) {
   console.error(`[validate-demos] ✗ ${msg}`);
@@ -70,6 +77,17 @@ function validateManifest(folderId, m, file) {
   for (const t of m.tags) if (!isKebab(t)) return fail(`${file}: tag "${t}" not kebab-case`);
   if (typeof m.official !== 'boolean')
     return fail(`${file}: official must be boolean`);
+  const isKnownOfficialDemo = OFFICIAL_DEMO_IDS.has(folderId);
+  if (m.official && !isKnownOfficialDemo) {
+    return fail(
+      `${file}: official=true is reserved for core-team demos already promoted into the gallery; community submissions must set false`,
+    );
+  }
+  if (!m.official && isKnownOfficialDemo) {
+    return fail(
+      `${file}: ${folderId} is a core official demo and must keep official=true (update OFFICIAL_DEMO_IDS if this changes intentionally)`,
+    );
+  }
   if (!/^#[0-9a-fA-F]{6}$/.test(m.accent_color))
     return fail(`${file}: accent_color must be #rrggbb`);
   if (typeof m.problem !== 'string' || m.problem.length < 8 || m.problem.length > 200)
