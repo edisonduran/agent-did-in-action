@@ -2,6 +2,8 @@
 
 > **Watch AI agents prove who they are, and catch tampering live.** Browser-only demo gallery for [Agent-DID](https://github.com/edisonduran/agent-did), built on the real [`@agentdid/sdk`](https://www.npmjs.com/package/@agentdid/sdk).
 
+[Open the live gallery](https://edisonduran.github.io/agent-did-in-action/)
+
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Built on @agentdid/sdk](https://img.shields.io/badge/built%20on-%40agentdid%2Fsdk%200.2.0-success)](https://www.npmjs.com/package/@agentdid/sdk)
 [![CI](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml/badge.svg)](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml)
@@ -14,6 +16,7 @@
 
 | If you want to... | Start with |
 |---|---|
+| see the live demo now | [Open the live gallery](https://edisonduran.github.io/agent-did-in-action/) |
 | understand the protocol | [Read the RFC](https://github.com/edisonduran/agent-did/blob/main/docs/RFC-001-Agent-DID-Specification.md) |
 | run the gallery in 2 minutes | [Open Quick start](#quick-start) |
 | contribute a demo | [Read CONTRIBUTING.md](CONTRIBUTING.md) and [docs/DEMO-SPEC.md](docs/DEMO-SPEC.md) |

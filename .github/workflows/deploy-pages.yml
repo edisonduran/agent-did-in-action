@@ -33,7 +33,7 @@ jobs:
 
       - name: Build static site for GitHub Pages
         env:
-          DEPLOY_BASE: /agent-did-in-action/
+          DEPLOY_BASE: ./
         run: npm run build
 
       - name: Setup Pages
