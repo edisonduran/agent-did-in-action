@@ -7,6 +7,7 @@ import type {
   DemoSceneApi,
   DemoScenarioOpts,
 } from '../types';
+import { assetPath } from '../../ui/assetPath';
 import manifest from './manifest.json';
 
 const AGENTS: DemoAgent[] = [
@@ -19,7 +20,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You produce signed drafts and never rewrite your revision history silently',
       capabilities: ['story.draft', 'story.submit'],
     },
-    spriteUrl: '/sprites/newsroom-reporter.svg',
+    spriteUrl: assetPath('sprites/newsroom-reporter.svg'),
     home: { gx: 1, gy: 1 },
     codeSnippet: [
       '// Reporter signs the draft revision before handing it off',
@@ -40,7 +41,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You only clear drafts whose upstream signature verifies',
       capabilities: ['story.verify', 'story.clear'],
     },
-    spriteUrl: '/sprites/newsroom-factchecker.svg',
+    spriteUrl: assetPath('sprites/newsroom-factchecker.svg'),
     home: { gx: 4, gy: 1 },
     codeSnippet: [
       '// Fact checker verifies the reporter, then signs clearance',
@@ -58,7 +59,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You may only relay the exact cleared revision upstream approved',
       capabilities: ['story.relay', 'story.release'],
     },
-    spriteUrl: '/sprites/newsroom-editor.svg',
+    spriteUrl: assetPath('sprites/newsroom-editor.svg'),
     home: { gx: 6, gy: 2 },
     codeSnippet: [
       '// Editor must relay the fact-check clearance unchanged',
@@ -78,7 +79,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You reject any relayed clearance whose bytes differ from what upstream approved',
       capabilities: ['story.publish', 'story.reject'],
     },
-    spriteUrl: '/sprites/newsroom-publisher.svg',
+    spriteUrl: assetPath('sprites/newsroom-publisher.svg'),
     home: { gx: 6, gy: 5 },
     codeSnippet: [
       '// Publisher verifies the editor order before going live',

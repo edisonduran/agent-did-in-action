@@ -7,6 +7,7 @@ import type {
   DemoSceneApi,
   DemoScenarioOpts,
 } from '../types';
+import { assetPath } from '../../ui/assetPath';
 import manifest from './manifest.json';
 
 const AGENTS: DemoAgent[] = [
@@ -19,7 +20,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You manufacture goods and sign every outgoing shipment',
       capabilities: ['shipment.issue', 'manifest.sign'],
     },
-    spriteUrl: '/sprites/agent-factory.svg',
+    spriteUrl: assetPath('sprites/agent-factory.svg'),
     home: { gx: 1, gy: 2 },
     codeSnippet: [
       "// Factory signs every outgoing shipment manifest",
@@ -40,7 +41,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You forward shipments and may not alter the manifest',
       capabilities: ['shipment.transport', 'manifest.relay'],
     },
-    spriteUrl: '/sprites/agent-courier.svg',
+    spriteUrl: assetPath('sprites/agent-courier.svg'),
     home: { gx: 4, gy: 3 },
     codeSnippet: [
       "// Honest courier MUST forward the factory's payload as-is",
@@ -60,7 +61,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You only accept shipments whose manifest signature verifies',
       capabilities: ['shipment.receive', 'manifest.verify'],
     },
-    spriteUrl: '/sprites/agent-warehouse.svg',
+    spriteUrl: assetPath('sprites/agent-warehouse.svg'),
     home: { gx: 6, gy: 5 },
     codeSnippet: [
       "// Receiver verifies the FACTORY signature against the relayed payload",

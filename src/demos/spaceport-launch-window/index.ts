@@ -7,6 +7,7 @@ import type {
   DemoSceneApi,
   DemoScenarioOpts,
 } from '../types';
+import { assetPath } from '../../ui/assetPath';
 import manifest from './manifest.json';
 
 const AGENTS: DemoAgent[] = [
@@ -19,7 +20,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You sign launch-weather windows and never approve conditions you did not measure',
       capabilities: ['launch.weather', 'launch.wind-score'],
     },
-    spriteUrl: '/sprites/spaceport-weather.svg',
+    spriteUrl: assetPath('sprites/spaceport-weather.svg'),
     home: { gx: 1, gy: 1 },
     codeSnippet: [
       '// Weather station signs the approved launch wind score',
@@ -40,7 +41,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You only clear launches whose upstream weather report verifies',
       capabilities: ['launch.verify', 'launch.clear'],
     },
-    spriteUrl: '/sprites/spaceport-range-safety.svg',
+    spriteUrl: assetPath('sprites/spaceport-range-safety.svg'),
     home: { gx: 4, gy: 1 },
     codeSnippet: [
       '// Range safety verifies weather, then signs launch clearance',
@@ -58,7 +59,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You relay the exact launch clearance bytes to the launch gate',
       capabilities: ['launch.relay', 'launch.dispatch'],
     },
-    spriteUrl: '/sprites/spaceport-flight-control.svg',
+    spriteUrl: assetPath('sprites/spaceport-flight-control.svg'),
     home: { gx: 6, gy: 2 },
     codeSnippet: [
       '// Flight control relays the range-safety clearance unchanged',
@@ -78,7 +79,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You open the launch window only after range-safety bytes verify exactly',
       capabilities: ['launch.open', 'launch.reject'],
     },
-    spriteUrl: '/sprites/spaceport-launch-gate.svg',
+    spriteUrl: assetPath('sprites/spaceport-launch-gate.svg'),
     home: { gx: 6, gy: 5 },
     codeSnippet: [
       '// Launch gate verifies range-safety before opening the window',

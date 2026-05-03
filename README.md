@@ -171,7 +171,7 @@ funnel locally. The current event names are listed in
 | Scene | [PixiJS](https://pixijs.com) 8 | WebGL isometric tiles + sprites |
 | SDK | [`@agentdid/sdk`](https://www.npmjs.com/package/@agentdid/sdk) 0.2.0 | The real published package — no mocks |
 | Tests | Vitest + Playwright | Unit + cross-browser smoke |
-| Hosting | Static (Vercel) | Zero backend |
+| Hosting | Static (GitHub Pages) | Zero backend |
 
 ---
 

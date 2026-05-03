@@ -13,6 +13,7 @@
  */
 
 import type { DemoManifest, DemoModule } from './types';
+import { assetPath } from '../ui/assetPath';
 
 import newsroomPublishChainManifest from './newsroom-publish-chain/manifest.json';
 import pharmaRecallCascadeManifest from './pharma-recall-cascade/manifest.json';
@@ -28,27 +29,27 @@ export interface RegistryEntry {
 
 export const DEMO_REGISTRY: readonly RegistryEntry[] = [
   {
-    heroSrc: '/heroes/newsroom-publish-chain.svg',
+    heroSrc: assetPath('heroes/newsroom-publish-chain.svg'),
     manifest: newsroomPublishChainManifest as DemoManifest,
     load: () => import('./newsroom-publish-chain/index').then((m) => m.default),
   },
   {
-    heroSrc: '/heroes/pharma-recall-cascade.svg',
+    heroSrc: assetPath('heroes/pharma-recall-cascade.svg'),
     manifest: pharmaRecallCascadeManifest as DemoManifest,
     load: () => import('./pharma-recall-cascade/index').then((m) => m.default),
   },
   {
-    heroSrc: '/heroes/shopping-mall.svg',
+    heroSrc: assetPath('heroes/shopping-mall.svg'),
     manifest: shoppingMallManifest as DemoManifest,
     load: () => import('./shopping-mall/index').then((m) => m.default),
   },
   {
-    heroSrc: '/heroes/spaceport-launch-window.svg',
+    heroSrc: assetPath('heroes/spaceport-launch-window.svg'),
     manifest: spaceportLaunchWindowManifest as DemoManifest,
     load: () => import('./spaceport-launch-window/index').then((m) => m.default),
   },
   {
-    heroSrc: '/heroes/supply-chain.svg',
+    heroSrc: assetPath('heroes/supply-chain.svg'),
     manifest: supplyChainManifest as DemoManifest,
     load: () => import('./supply-chain/index').then((m) => m.default),
   },

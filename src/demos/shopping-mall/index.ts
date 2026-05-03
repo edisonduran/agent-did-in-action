@@ -7,6 +7,7 @@ import type {
   DemoSceneApi,
   DemoScenarioOpts,
 } from '../types';
+import { assetPath } from '../../ui/assetPath';
 import manifest from './manifest.json';
 
 const AGENTS: DemoAgent[] = [
@@ -19,7 +20,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You shop on behalf of your human principal',
       capabilities: ['cart.add', 'payment.authorize'],
     },
-    spriteUrl: '/sprites/agent-shopper.svg',
+    spriteUrl: assetPath('sprites/agent-shopper.svg'),
     home: { gx: 1, gy: 1 },
     codeSnippet: [
       "// Shopper greets the store on behalf of its human",
@@ -39,7 +40,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You sell clothes and process payments',
       capabilities: ['inventory.read', 'price.quote', 'payment.charge'],
     },
-    spriteUrl: '/sprites/agent-store.svg',
+    spriteUrl: assetPath('sprites/agent-store.svg'),
     home: { gx: 5, gy: 2 },
     codeSnippet: [
       "// Store quotes a price and forwards a signed charge",
@@ -60,7 +61,7 @@ const AGENTS: DemoAgent[] = [
       systemPrompt: 'You verify and process charges',
       capabilities: ['payment.verify', 'payment.process'],
     },
-    spriteUrl: '/sprites/agent-payment.svg',
+    spriteUrl: assetPath('sprites/agent-payment.svg'),
     home: { gx: 3, gy: 5 },
     codeSnippet: [
       "// Payment bot verifies the signature before charging",
