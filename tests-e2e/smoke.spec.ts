@@ -6,30 +6,40 @@ const DEMOS = [
     title: 'Newsroom Publish Chain',
     tagline:
       'A reporter, fact-checker, editor, and publisher preserve editorial provenance across a four-agent release chain.',
+    hint:
+      'Editorial AI pipelines need to prove the story that gets published is the same one that was checked and approved upstream.',
   },
   {
     id: 'pharma-recall-cascade',
     title: 'Pharma Recall Cascade',
     tagline:
       'A manufacturer, regulator, wholesaler, and hospital pharmacy preserve the exact scope of an emergency drug recall.',
+    hint:
+      'Safety-critical recall chains fail if a middleman can shrink or expand the affected batch scope without getting caught.',
   },
   {
     id: 'shopping-mall',
     title: 'The Plaza Shopping Mall',
     tagline:
       'A shopper, a store, and a payment bot exchange signed handoffs in real time.',
+    hint:
+      'Multi-agent commerce: how do we know the bot taking your money is actually the one the store hired?',
   },
   {
     id: 'spaceport-launch-window',
     title: 'Spaceport Launch Window',
     tagline:
       'Weather, range safety, flight control, and the launch gate coordinate a signed go/no-go chain for a launch window.',
+    hint:
+      'Autonomous launch operations need to prove the final gate saw the exact clearance chain, not a forged or corrupted last-hop signal.',
   },
   {
     id: 'supply-chain',
     title: 'Cold-chain Supply Bots',
     tagline:
       'A factory, a courier, and a receiver swap signed shipment manifests — and catch a courier that lies.',
+    hint:
+      "Multi-hop logistics: how do we trust the courier didn't tamper with the manifest before delivery?",
   },
 ];
 
@@ -42,7 +52,8 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
     });
 
     await page.goto('/');
-    await expect(page.getByText('Agent-DID Plaza')).toBeVisible();
+    await expect(page).toHaveTitle('Browse demos - Agent-DID');
+    await expect(page.getByTestId('app-header-title')).toHaveText('Browse demos');
     await expect(page.getByRole('heading', { name: 'The Plaza Gallery' })).toBeVisible();
     for (const demo of DEMOS) {
       await expect(page.getByRole('heading', { name: demo.title })).toBeVisible();
@@ -50,8 +61,12 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
     await expect(page.getByAltText('Newsroom Publish Chain preview art')).toBeVisible();
     await expect(page.getByAltText('Spaceport Launch Window preview art')).toBeVisible();
     await expect(page.getByAltText('Pharma Recall Cascade preview art')).toBeVisible();
+    await expect(page.getByAltText('The Plaza Shopping Mall preview art')).toBeVisible();
+    await expect(page.getByAltText('Cold-chain Supply Bots preview art')).toBeVisible();
 
     await page.goto('/?demo=shopping-mall');
+    await expect(page).toHaveTitle('The Plaza Shopping Mall - Agent-DID');
+    await expect(page.getByTestId('app-header-title')).toHaveText('The Plaza Shopping Mall');
     await expect(page.locator('canvas')).toBeVisible({ timeout: 15_000 });
     await expect(page.getByRole('heading', { name: 'Live trace' })).toBeVisible({
       timeout: 20_000,
@@ -59,6 +74,7 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
     await expect(page.getByTestId('hud-demo-context')).toContainText(
       'A shopper, a store, and a payment bot exchange signed handoffs in real time.',
     );
+    await expect(page.getByText('Multi-agent commerce: how do we know the bot taking your money is actually the one the store hired?')).toBeVisible();
 
     expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
   });
@@ -92,10 +108,13 @@ test.describe('Plaza gallery + demo — production build smoke', () => {
         await card.scrollIntoViewIfNeeded();
         await card.click();
         await expect(page).toHaveURL(new RegExp(`\\?demo=${demo.id}$`));
+        await expect(page.getByTestId('app-header-title')).toHaveText(demo.title);
         await expect(page.locator('canvas')).toBeVisible({ timeout: 15_000 });
-        await expect(page.getByText(demo.title)).toBeVisible({ timeout: 15_000 });
+        await expect(page.locator('main').getByText(demo.title)).toBeVisible({ timeout: 15_000 });
         await expect(page.getByTestId('hud-demo-context')).toContainText(demo.tagline);
+        await expect(page.getByText(demo.hint)).toBeVisible();
         await page.getByRole('button', { name: /Gallery/ }).click();
+        await expect(page.getByTestId('app-header-title')).toHaveText('Browse demos');
         await expect(page.getByRole('heading', { name: 'The Plaza Gallery' })).toBeVisible();
       });
     }

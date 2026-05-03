@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="bg-mall" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#082f49"/>
+      <stop offset="55%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#164e63"/>
+    </linearGradient>
+    <linearGradient id="beam-mall" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#a5f3fc" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#67e8f9" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg-mall)"/>
+  <circle cx="144" cy="192" r="46" fill="#0f172a" stroke="#67e8f9" stroke-width="5"/>
+  <circle cx="320" cy="172" r="46" fill="#0f172a" stroke="#22d3ee" stroke-width="5"/>
+  <circle cx="496" cy="192" r="46" fill="#0f172a" stroke="#a5f3fc" stroke-width="5"/>
+  <path d="M144 192 C198 170 252 156 320 172 S442 212 496 192" fill="none" stroke="url(#beam-mall)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M130 176 L158 176 L153 211 H135 Z" fill="#67e8f9"/>
+  <path d="M136 176 C136 160 152 160 152 176" fill="none" stroke="#082f49" stroke-width="4" stroke-linecap="round"/>
+  <rect x="290" y="165" width="60" height="36" rx="6" fill="#67e8f9"/>
+  <path d="M284 164 H356 L344 146 H296 Z" fill="#fef08a"/>
+  <path d="M296 146 V164 M308 146 V164 M320 146 V164 M332 146 V164 M344 146 V164" stroke="#082f49" stroke-width="4" stroke-linecap="round"/>
+  <rect x="470" y="166" width="52" height="34" rx="8" fill="#e0f2fe"/>
+  <rect x="478" y="174" width="20" height="6" rx="3" fill="#0f172a"/>
+  <rect x="478" y="186" width="36" height="6" rx="3" fill="#38bdf8"/>
+  <circle cx="144" cy="192" r="6" fill="#f8fafc"/>
+  <circle cx="320" cy="172" r="6" fill="#f8fafc"/>
+  <circle cx="496" cy="192" r="6" fill="#082f49"/>
+  <g fill="#cffafe" font-family="monospace" font-size="18" font-weight="bold">
+    <text x="94" y="260">SHOPPER</text>
+    <text x="284" y="246">STORE</text>
+    <text x="446" y="260">PAYMENT</text>
+  </g>
+  <text x="48" y="68" fill="#ecfeff" font-family="monospace" font-size="40" font-weight="bold">THE PLAZA SHOPPING MALL</text>
+  <text x="48" y="320" fill="#cffafe" font-family="monospace" font-size="20">Signed retail handoffs should prove the payment bot is the one the store actually trusts.</text>
+</svg>

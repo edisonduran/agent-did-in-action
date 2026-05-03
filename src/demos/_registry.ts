@@ -38,6 +38,7 @@ export const DEMO_REGISTRY: readonly RegistryEntry[] = [
     load: () => import('./pharma-recall-cascade/index').then((m) => m.default),
   },
   {
+    heroSrc: '/heroes/shopping-mall.svg',
     manifest: shoppingMallManifest as DemoManifest,
     load: () => import('./shopping-mall/index').then((m) => m.default),
   },
@@ -47,6 +48,7 @@ export const DEMO_REGISTRY: readonly RegistryEntry[] = [
     load: () => import('./spaceport-launch-window/index').then((m) => m.default),
   },
   {
+    heroSrc: '/heroes/supply-chain.svg',
     manifest: supplyChainManifest as DemoManifest,
     load: () => import('./supply-chain/index').then((m) => m.default),
   },

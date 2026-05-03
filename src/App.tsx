@@ -42,6 +42,27 @@ function buildDemoContext(demo: DemoModule): string {
   return [scope, ...tags].join(' · ');
 }
 
+function buildHeaderTitle(selectedId: string | null, demo: DemoModule | null): string {
+  if (!selectedId) return 'Browse demos';
+  return demo?.manifest.title ?? findDemo(selectedId)?.manifest.title ?? 'Loading demo';
+}
+
+function buildHeaderSubtitle(selectedId: string | null, demo: DemoModule | null): string {
+  if (!selectedId) {
+    return 'Pick a demo to watch real @agentdid/sdk signatures.';
+  }
+  return (
+    demo?.manifest.tagline ??
+    findDemo(selectedId)?.manifest.tagline ??
+    'Generating real Ed25519 keys for the agents.'
+  );
+}
+
+function buildDocumentTitle(selectedId: string | null, demo: DemoModule | null): string {
+  if (!selectedId) return 'Browse demos - Agent-DID';
+  return `${buildHeaderTitle(selectedId, demo)} - Agent-DID`;
+}
+
 export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(() => readDemoIdFromUrl());
   const [demo, setDemo] = useState<DemoModule | null>(null);
@@ -65,6 +86,11 @@ export default function App() {
   }, []);
 
   const entry = useMemo(() => findDemo(selectedId), [selectedId]);
+
+  useEffect(() => {
+    document.title = buildDocumentTitle(selectedId, demo);
+  }, [selectedId, demo]);
+
   useEffect(() => {
     if (!selectedId) {
       setDemo(null);
@@ -142,7 +168,11 @@ export default function App() {
 
   return (
     <div className="flex h-full flex-col">
-      <Header onLogoClick={selectedId ? handleBack : undefined} />
+      <Header
+        onLogoClick={selectedId ? handleBack : undefined}
+        title={buildHeaderTitle(selectedId, demo)}
+        subtitle={buildHeaderSubtitle(selectedId, demo)}
+      />
       <main className="relative flex-1">
         {!selectedId && <Gallery onPick={handlePick} />}
         {selectedId && demoError && (
@@ -176,6 +206,8 @@ export default function App() {
               demoTitle={demo.manifest.title}
               demoContext={buildDemoContext(demo)}
               demoTagline={demo.manifest.tagline}
+              demoHint={demo.manifest.problem}
+              attackerHint={demo.attacker?.description}
               onBackToGallery={handleBack}
               attackerLabel={demo.attacker?.label}
             />

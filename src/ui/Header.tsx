@@ -10,22 +10,37 @@ function handleShare(url: string) {
   window.open(tweet, '_blank', 'noopener,noreferrer');
 }
 
-export function Header({ onLogoClick }: { onLogoClick?: () => void } = {}) {
+interface HeaderProps {
+  onLogoClick?: () => void;
+  title: string;
+  subtitle: string;
+}
+
+export function Header({ onLogoClick, title, subtitle }: HeaderProps) {
   return (
     <header className="flex items-center justify-between border-b border-plaza-border bg-plaza-panel px-4 py-3">
       <button
         type="button"
         onClick={onLogoClick}
         disabled={!onLogoClick}
+        title={onLogoClick ? 'Back to gallery' : undefined}
         className="flex items-center gap-3 text-left disabled:cursor-default"
       >
         <div className="flex h-8 w-8 items-center justify-center rounded bg-plaza-accent font-mono text-sm font-bold text-plaza-bg">
           DID
         </div>
-        <div>
-          <div className="font-semibold text-plaza-accent">Agent-DID Plaza</div>
-          <div className="text-xs text-plaza-dim">
-            {onLogoClick ? 'Back to gallery' : 'Watch AI agents prove who they are'}
+        <div className="min-w-0">
+          <div
+            className="truncate font-semibold text-plaza-accent"
+            data-testid="app-header-title"
+          >
+            {title}
+          </div>
+          <div
+            className="max-w-[44rem] truncate text-xs text-plaza-dim"
+            data-testid="app-header-subtitle"
+          >
+            {subtitle}
           </div>
         </div>
       </button>

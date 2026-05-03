@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="bg-supply" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="55%" stop-color="#4c1d95"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <linearGradient id="flow-supply" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#f5d0fe" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.45"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg-supply)"/>
+  <rect x="96" y="156" width="92" height="64" rx="10" fill="#0f172a" stroke="#c084fc" stroke-width="5"/>
+  <rect x="206" y="178" width="120" height="40" rx="14" fill="#0f172a" stroke="#ddd6fe" stroke-width="5"/>
+  <rect x="430" y="150" width="108" height="78" rx="10" fill="#0f172a" stroke="#e9d5ff" stroke-width="5"/>
+  <path d="M188 190 C220 188 252 188 266 198 S298 206 326 198" fill="none" stroke="url(#flow-supply)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M326 198 C364 188 396 180 430 188" fill="none" stroke="url(#flow-supply)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M338 132 C366 146 392 160 420 174" fill="none" stroke="#fef3c7" stroke-width="5" stroke-linecap="round" stroke-dasharray="8 10"/>
+  <path d="M112 170 H140 V146 H172 V220 H112 Z" fill="#c084fc"/>
+  <path d="M222 188 H272 L294 170 H318 V208 H222 Z" fill="#ddd6fe"/>
+  <circle cx="248" cy="222" r="10" fill="#0f172a" stroke="#ddd6fe" stroke-width="4"/>
+  <circle cx="300" cy="222" r="10" fill="#0f172a" stroke="#ddd6fe" stroke-width="4"/>
+  <path d="M444 228 V174 H482 V150 H524 V228 Z" fill="#e9d5ff"/>
+  <rect x="470" y="190" width="22" height="38" fill="#312e81"/>
+  <rect x="452" y="184" width="12" height="12" fill="#312e81"/>
+  <rect x="500" y="184" width="12" height="12" fill="#312e81"/>
+  <rect x="348" y="118" width="42" height="26" rx="5" fill="#f59e0b"/>
+  <path d="M356 118 V104 H382 V118" fill="none" stroke="#fde68a" stroke-width="4" stroke-linecap="round"/>
+  <g fill="#ede9fe" font-family="monospace" font-size="18" font-weight="bold">
+    <text x="96" y="258">FACTORY</text>
+    <text x="214" y="258">COURIER</text>
+    <text x="434" y="258">RECEIVER</text>
+  </g>
+  <text x="48" y="68" fill="#f5f3ff" font-family="monospace" font-size="42" font-weight="bold">COLD-CHAIN SUPPLY BOTS</text>
+  <text x="48" y="320" fill="#ede9fe" font-family="monospace" font-size="20">A courier must relay the signed manifest intact or the receiver should block the delivery.</text>
+</svg>

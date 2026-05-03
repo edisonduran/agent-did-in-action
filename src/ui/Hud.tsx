@@ -8,6 +8,8 @@ interface HudProps {
   demoTitle?: string;
   demoContext?: string;
   demoTagline?: string;
+  demoHint?: string;
+  attackerHint?: string;
   onBackToGallery?: () => void;
   attackerLabel?: string;
 }
@@ -22,6 +24,8 @@ export function Hud({
   demoTitle,
   demoContext,
   demoTagline,
+  demoHint,
+  attackerHint,
   onBackToGallery,
   attackerLabel,
 }: HudProps) {
@@ -63,8 +67,8 @@ export function Hud({
         </label>
         <p className="mt-1 max-w-[260px] text-[11px] text-plaza-dim">
           {attackerMode
-            ? 'A handoff signature gets tampered with in flight. Watch the SDK reject it.'
-            : 'All handoffs use real Ed25519 signatures verified by @agentdid/sdk.'}
+            ? (attackerHint ?? 'A handoff signature gets tampered with in flight. Watch the SDK reject it.')
+            : (demoHint ?? 'All handoffs use real Ed25519 signatures verified by @agentdid/sdk.')}
         </p>
         {attackerMode && attackerLabel && (
           <p className="mt-1 max-w-[260px] text-[11px] font-semibold text-plaza-bad">
