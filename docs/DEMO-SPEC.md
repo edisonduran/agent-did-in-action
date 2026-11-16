@@ -129,7 +129,7 @@ in CI. Required fields:
 | `tagline`       | string   | ≤ 140 chars; one sentence shown on the gallery card |
 | `author`        | object   | `{ name, github }` — `github` is the bare handle    |
 | `license`       | string   | `Apache-2.0` or `MIT`                              |
-| `sdk_version`   | string   | semver range, e.g. `^0.2.0`                         |
+| `sdk_version`   | string   | semver range, e.g. `^1.0.0-rc.5`                         |
 | `tags`          | string[] | 1..8 lowercase kebab-case tags                      |
 | `official`      | boolean  | reserved for core-team demos already promoted into the gallery; community submissions MUST set `false` |
 | `accent_color`  | string   | `#rrggbb`                                           |

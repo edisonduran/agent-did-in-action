@@ -9,7 +9,7 @@ import { initSound, isMuted, setMuted } from './sound/cues';
 import { findDemo } from './demos/_registry';
 import type { DemoModule } from './demos/types';
 
-// Lazy-load the scene: it pulls in PixiJS, ethers, and @agentdid/sdk
+// Lazy-load the scene: it pulls in PixiJS and @agentdid/sdk
 // (~600 KB compressed). Splitting them out lets the header + HUD paint
 // in <100 KB so first-paint metrics stay fast.
 const SceneContainer = lazy(() =>

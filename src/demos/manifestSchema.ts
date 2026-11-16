@@ -27,7 +27,7 @@ export const ManifestSchema = z
     license: z.enum(['Apache-2.0', 'MIT']),
     sdk_version: z
       .string()
-      .regex(/^[\^~]?\d+\.\d+\.\d+/, 'must be a semver-ish range like ^0.2.0'),
+      .regex(/^[\^~]?\d+\.\d+\.\d+/, 'must be a semver-ish range like ^1.0.0-rc.5'),
     tags: z
       .array(
         z

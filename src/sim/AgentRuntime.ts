@@ -4,16 +4,20 @@
  * "store verifies handoff") without leaking SDK internals.
  *
  * One AgentRuntime instance == one independent agent in the world,
- * with its own real Ed25519 keypair and DID document.
+ * with its own real Ed25519 keypair and did:webvh DID document.
+ *
+ * All agents of a browser session share one in-memory AgentDidClient:
+ * it holds their did:webvh logs and resolves their DIDs, with no network.
  */
 
-import { ethers } from 'ethers';
-import { AgentIdentity } from '@agentdid/sdk';
+const world = new AgentDidClient();
+
+import { AgentDidClient, AgentIdentity, LocalKeySigner, canonicalizeJson } from '@agentdid/sdk';
 import type { AgentSnapshot, AgentSpec, InteractionPayload } from './types';
 
 export interface SignedInteraction {
   payload: InteractionPayload;
-  /** Hex-encoded canonical JSON of payload, what was actually signed. */
+  /** RFC 8785 canonical JSON of payload, what was actually signed. */
   message: string;
   signature: string;
   signerDid: string;
@@ -38,8 +42,9 @@ export class AgentRuntime {
   }
 
   static async create(spec: AgentSpec): Promise<AgentRuntime> {
-    const wallet = ethers.Wallet.createRandom();
-    const identity = new AgentIdentity({ signer: wallet, network: 'polygon' });
+    // The controller (the human or organisation behind the agent) holds its own Ed25519 key
+    const [controllerSigner] = LocalKeySigner.generate();
+    const identity = new AgentIdentity({ controllerSigner, client: world });
     const { document, agentPrivateKey } = await identity.create({
       name: spec.name,
       description: spec.description,
@@ -74,7 +79,7 @@ export class AgentRuntime {
   }
 
   static async verify(signed: SignedInteraction): Promise<boolean> {
-    return AgentIdentity.verifySignature(
+    return world.verifySignature(
       signed.signerDid,
       signed.message,
       signed.signature,
@@ -91,25 +96,13 @@ export class AgentRuntime {
     signature: string,
   ): Promise<boolean> {
     const message = canonicalize(payload);
-    return AgentIdentity.verifySignature(claimedDid, message, signature);
+    return world.verifySignature(claimedDid, message, signature);
   }
 }
 
 /**
- * Deterministic JSON serialization so signer and verifier agree on bytes.
- * Sorts keys alphabetically; refuses to serialize undefined values.
+ * RFC 8785 (JCS) canonical JSON, from the SDK, so signer and verifier agree on bytes.
  */
 export function canonicalize(value: unknown): string {
-  return JSON.stringify(value, (_key, v) => {
-    if (v === undefined) return null;
-    if (v && typeof v === 'object' && !Array.isArray(v)) {
-      return Object.keys(v)
-        .sort()
-        .reduce<Record<string, unknown>>((acc, k) => {
-          acc[k] = (v as Record<string, unknown>)[k];
-          return acc;
-        }, {});
-    }
-    return v;
-  });
+  return canonicalizeJson(value);
 }

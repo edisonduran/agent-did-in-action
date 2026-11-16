@@ -31,7 +31,7 @@ describe('canonicalize', () => {
 describe('AgentRuntime', () => {
   it('creates a real DID and snapshot', async () => {
     const agent = await AgentRuntime.create(STORE_SPEC);
-    expect(agent.did).toMatch(/^did:agent:polygon:0x[0-9a-f]{64}$/);
+    expect(agent.did).toMatch(/^did:webvh:[^:]+:/);
     expect(agent.snapshot()).toMatchObject({
       id: 'store-77',
       role: 'store',
@@ -44,7 +44,7 @@ describe('AgentRuntime', () => {
     const store = await AgentRuntime.create(STORE_SPEC);
     const payload: InteractionPayload = {
       from: store.did,
-      to: 'did:agent:payment-bot',
+      to: 'did:webvh:payment-bot.example',
       action: 'charge',
       claims: { priceUsd: 42 },
       nonce: 'test-nonce-1',
@@ -59,7 +59,7 @@ describe('AgentRuntime', () => {
     const store = await AgentRuntime.create(STORE_SPEC);
     const payload: InteractionPayload = {
       from: store.did,
-      to: 'did:agent:payment-bot',
+      to: 'did:webvh:payment-bot.example',
       action: 'charge',
       claims: { priceUsd: 100 },
       nonce: 'test-nonce-2',
@@ -83,7 +83,7 @@ describe('AgentRuntime', () => {
     const shopper = await AgentRuntime.create(SHOPPER_SPEC);
     const payload: InteractionPayload = {
       from: shopper.did,
-      to: 'did:agent:payment-bot',
+      to: 'did:webvh:payment-bot.example',
       action: 'charge',
       claims: { priceUsd: 999 },
       nonce: 'test-nonce-3',

@@ -71,7 +71,7 @@ function validateManifest(folderId, m, file) {
   if (!ALLOWED_LICENSES.has(m.license))
     return fail(`${file}: license must be Apache-2.0 or MIT`);
   if (!/^[\^~]?\d+\.\d+\.\d+/.test(m.sdk_version))
-    return fail(`${file}: sdk_version must look like ^0.2.0`);
+    return fail(`${file}: sdk_version must look like ^1.0.0-rc.5`);
   if (!Array.isArray(m.tags) || m.tags.length < 1 || m.tags.length > 8)
     return fail(`${file}: tags must be 1..8 entries`);
   for (const t of m.tags) if (!isKebab(t)) return fail(`${file}: tag "${t}" not kebab-case`);
