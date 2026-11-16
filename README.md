@@ -5,7 +5,7 @@
 [Open Agent-DID in Action](https://edisonduran.github.io/agent-did-in-action/)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Built on @agentdid/sdk](https://img.shields.io/badge/built%20on-%40agentdid%2Fsdk%200.2.0-success)](https://www.npmjs.com/package/@agentdid/sdk)
+[![Built on @agentdid/sdk](https://img.shields.io/badge/built%20on-%40agentdid%2Fsdk%201.0.0--rc.5-success)](https://www.npmjs.com/package/@agentdid/sdk)
 [![CI](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml/badge.svg)](https://github.com/edisonduran/agent-did-in-action/actions/workflows/ci.yml)
 
 ![Agent-DID in Action preview](public/og-image.svg)
@@ -172,7 +172,7 @@ funnel locally. The current event names are listed in
 | Bundler / dev server | [Vite](https://vitejs.dev) 5 | Fast HMR, clean static build |
 | UI | React 18 + TypeScript 5 | Familiar, type-safe gallery shell |
 | Scene | [PixiJS](https://pixijs.com) 8 | WebGL isometric tiles + sprites |
-| SDK | [`@agentdid/sdk`](https://www.npmjs.com/package/@agentdid/sdk) 0.2.0 | The real published package — no mocks |
+| SDK | [`@agentdid/sdk`](https://www.npmjs.com/package/@agentdid/sdk) 1.0.0-rc.5 | The real published package — no mocks |
 | Tests | Vitest + Playwright | Unit + cross-browser smoke |
 | Hosting | Static (GitHub Pages) | Zero backend |
 

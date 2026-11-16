@@ -5,15 +5,12 @@
  *
  * Run with: node scripts/smoke.mjs
  */
-import { AgentIdentity } from '@agentdid/sdk';
-import { ethers } from 'ethers';
+import { AgentDidClient, AgentIdentity, LocalKeySigner } from '@agentdid/sdk';
 
 async function main() {
-  const storeWallet = ethers.Wallet.createRandom();
-  const shopperWallet = ethers.Wallet.createRandom();
-
-  const storeIdentity = new AgentIdentity({ signer: storeWallet, network: 'polygon' });
-  const shopperIdentity = new AgentIdentity({ signer: shopperWallet, network: 'polygon' });
+  const world = new AgentDidClient();
+  const storeIdentity = new AgentIdentity({ controllerSigner: LocalKeySigner.generate()[0], client: world });
+  const shopperIdentity = new AgentIdentity({ controllerSigner: LocalKeySigner.generate()[0], client: world });
 
   const store = await storeIdentity.create({
     name: 'Store-Clothing-77',
@@ -33,16 +30,16 @@ async function main() {
 
   const payload = JSON.stringify({
     from: store.document.id,
-    to: 'did:agent:payment-bot',
+    to: 'did:webvh:payment-bot.example',
     action: 'charge',
     amount: 42
   });
 
   const signature = await storeIdentity.signMessage(payload, store.agentPrivateKey);
-  const verifyOk = await AgentIdentity.verifySignature(store.document.id, payload, signature);
+  const verifyOk = await world.verifySignature(store.document.id, payload, signature);
 
   const tampered = signature.slice(0, -2) + (signature.endsWith('00') ? '11' : '00');
-  const verifyTamperedOk = await AgentIdentity.verifySignature(store.document.id, payload, tampered);
+  const verifyTamperedOk = await world.verifySignature(store.document.id, payload, tampered);
 
   const results = {
     storeDid: store.document.id,

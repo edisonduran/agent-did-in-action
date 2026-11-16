@@ -5,7 +5,7 @@
   "tagline": "Weather, range safety, flight control, and the launch gate coordinate a signed go/no-go chain for a launch window.",
   "author": { "name": "Agent-DID core team", "github": "edisonduran" },
   "license": "Apache-2.0",
-  "sdk_version": "^0.2.0",
+  "sdk_version": "^1.0.0-rc.5",
   "tags": ["space", "operations", "mitm", "advanced-official"],
   "official": true,
   "accent_color": "#0ea5e9",

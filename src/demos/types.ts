@@ -26,7 +26,7 @@ export interface DemoManifest {
   author: { name: string; github: string };
   /** SPDX identifier. Only Apache-2.0 or MIT accepted. */
   license: 'Apache-2.0' | 'MIT';
-  /** Minimum @agentdid/sdk version required (semver, e.g. `^0.2.0`). */
+  /** Minimum @agentdid/sdk version required (semver, e.g. `^1.0.0-rc.5`). */
   sdk_version: string;
   /** Free-form tags for filtering (lowercase, kebab-case). */
   tags: string[];

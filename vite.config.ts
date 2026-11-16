@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
@@ -5,11 +6,22 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 // https://vitejs.dev/config/
 export default defineConfig({
   base: process.env.DEPLOY_BASE || '/',
+  resolve: {
+    alias: [
+      // @agentdid/sdk imports these lazily for file stores and its SSRF-safe fetcher;
+      // the demo never reaches them, see src/shims/node-unavailable.ts
+      {
+        find: /^(node:)?(fs\/promises|dns|http|https)$/,
+        replacement: fileURLToPath(new URL('./src/shims/node-unavailable.ts', import.meta.url)),
+      },
+    ],
+  },
   plugins: [
     react(),
     nodePolyfills({
-      // ethers v6 + @noble/* may reach for Buffer / process / crypto in browser bundles.
-      // Enable polyfills conservatively; we'll prune later once we confirm what is actually needed.
+      // Left to the aliases above instead
+      exclude: ['fs', 'dns', 'http', 'https'],
+      // @agentdid/sdk and its dependencies may reach for Buffer / process / path in browser bundles.
       globals: {
         Buffer: true,
         global: true,
@@ -24,7 +36,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (id.includes('pixi.js')) return 'pixi';
-            if (id.includes('@agentdid/sdk') || id.includes('@noble') || id.includes('ethers')) {
+            if (id.includes('@agentdid/sdk') || id.includes('@noble')) {
               return 'sdk';
             }
             if (id.includes('react') || id.includes('scheduler')) return 'react-vendor';
